@@ -96,12 +96,15 @@ class MessageIntentHandler extends AbstractIntentHandler {
 
     constructor() {
         super();
+        console.log("MessageIntentHandler")
         this.setName("Send Message");
         this.addUtterances("send message", "send a message");
     }
 
     handle(utterance) {
 
+
+        console.log("MessageIntentHandler HANDLE")
         // Already writing
         if (AutoMessageManager.writingMessage) {
             Logger.ERROR("Failed to send voice message, an auto-message is currently in progress.");
@@ -121,7 +124,7 @@ class MessageIntentHandler extends AbstractIntentHandler {
 
             // Send Message
             AutoMessageManager.writeMessage(
-                $(".chatmsg"),
+                $(".messageInput"),
                 textContent,
                 timePerMessage,
                 withDelay * 1000,

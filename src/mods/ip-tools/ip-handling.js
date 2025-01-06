@@ -8,7 +8,7 @@ class IPGrabberManager extends Module {
 
     GEO_MAPPINGS = {
         country: "Country",
-        region: "Region",
+        state: "Region",
         city: "City",
         organization: "Provider"
     }
@@ -71,7 +71,7 @@ class IPGrabberManager extends Module {
         console.log("onDisplayScrapeData")
         // Must be chatting
         // if (!ChatRegistry.isChatting()) {
-        //     console.log("ChatRegistry - isChatting")
+        //     console.log("ChatRegistry - isChatting = false")
         //     return;
         // }
 
@@ -126,7 +126,7 @@ class IPGrabberManager extends Module {
         let fetchJson;
         try {
             let fetchResult = await fetchWithTimeout(
-                `${ConstantValues.apiURL}json.gp?ip={unhashedAddress}`,
+                `${ConstantValues.apiURL}prod/geoip2?ip_address=${unhashedAddress}`,
                 {timeout: 5000}
             );
             fetchJson = await fetchResult.json();
@@ -144,6 +144,12 @@ class IPGrabberManager extends Module {
     createAddressContainer(unhashedAddress, hashedAddress, previousHashedAddresses, showData, seenTimes) {
 
         const innerLogBox = document.getElementsByClassName("chatWindow")[0].parentNode;
+
+        const existingLogItems = innerLogBox.getElementsByClassName("logitem");
+        while (existingLogItems.length > 0) {
+            existingLogItems[0].remove();
+        }
+
         const logItemDiv = document.createElement("div");
         const seenBeforeDiv = document.createElement("div")
 
@@ -155,9 +161,9 @@ class IPGrabberManager extends Module {
         seenBeforeDiv.classList.add("logitem");
 
         const plural = (seenTimes > 1 || seenTimes === 0) ? "s" : "";
-        seenBeforeDiv.appendChild(
-            $(`<span class='statuslog'>You've seen this person ${seenTimes} time${plural} before.</span>`).get(0)
-        );
+        // seenBeforeDiv.appendChild(
+        //     $(`<span class='statuslog'>You've seen this person ${seenTimes} time${plural} before.</span>`).get(0)
+        // );
 
         this.ipToggleButton.html(showData ? this.DISABLE_TAG : this.ENABLE_TAG);
         innerLogBox.appendChild(this.ipToggleButton.get(0));
@@ -344,20 +350,20 @@ class IPGrabberManager extends Module {
 
         }
 
-        // Call Time
-        {
-            this.insertLogboxMessage(
-                "call_time_data", "Time In Call: ", "00:00"
-            )
+        // // Call Time
+        // {
+        //     this.insertLogboxMessage(
+        //         "call_time_data", "Time In Call: ", "00:00"
+        //     )
 
-            this.updateClock.addUpdate(
-                (date, startTime) => {
-                    let timeData = $("#call_time_data").get(0);
-                    if (timeData) timeData.childNodes[1].innerHTML = this.formatElapsedTime(date, startTime);
-                }
-            )
+        //     this.updateClock.addUpdate(
+        //         (date, startTime) => {
+        //             let timeData = $("#call_time_data").get(0);
+        //             if (timeData) timeData.childNodes[1].innerHTML = this.formatElapsedTime(date, startTime);
+        //         }
+        //     )
 
-        }
+        // }
 
         // Note
         if (!geoJSON.owner) {

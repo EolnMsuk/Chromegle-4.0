@@ -6,6 +6,7 @@ class SpeechMenu {
     static disable = () => MicroModal.hide(this.settingsModalElementId);
 
     constructor() {
+        console.log("SpeechMenu 1111111111111111111111111111111")
         let modal = document.createElement("div");
         $(modal).load(getResourceURL("public/html/voicecmds.html"));
         $("html").append(modal);

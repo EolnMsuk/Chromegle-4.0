@@ -32,6 +32,8 @@ class VideoFilterManager extends Module {
 
     onChatStarted() {
 
+        console.log("DRRRRRRRRRRRRRRRRRRININNNNNNNNNNNNNNNNN")
+
         if (!ChatRegistry.isVideoChat()) {
             return;
         }

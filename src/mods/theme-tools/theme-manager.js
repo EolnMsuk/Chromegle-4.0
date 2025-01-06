@@ -89,7 +89,7 @@ class OverrideManager {
             this.#overrideHomePageText,
             this.#overrideLinks,
             this.#resizeCommonInterestsLabel,
-            this.#wrapHeaderButtons
+            //this.#wrapHeaderButtons
         ].forEach((fn) => {
             try {
                 fn();
@@ -148,7 +148,8 @@ class OverrideManager {
         div.id = "menucontainer";
         div.classList.add("settingsButtonContainer");
         div.append(ButtonFactory.menuButton.get(0))
-        $("#tagline").replaceWith(div);
+        $(".rightSide").append(div);
+        //$("#tagline").replaceWith(div);
     };
 
     #overrideHongKongPoster = () => {

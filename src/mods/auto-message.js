@@ -5,6 +5,10 @@ class AutoMessageManager extends Module {
     async onChatStarted() {
         let greetingEnabled = await config.greetingToggle.retrieveValue();
 
+        console.log("AutoMessageManager 111111111111111111111111111111")
+
+
+
         if (greetingEnabled !== "true") {
             return;
         }
@@ -24,7 +28,7 @@ class AutoMessageManager extends Module {
         // Send the message after a certain delay
         setTimeout(() => {
             AutoMessageManager.writeMessage(
-                $(".chatmsg"),
+                $(".messageInput"),
                 messageContent,
                 timePerMessage,
                 sendDelay * 1000,
@@ -50,26 +54,35 @@ class AutoMessageManager extends Module {
     }
 
     static cancelMessage(interval) {
+        document.querySelector('textarea[aria-label="Send a message"].messageInput').value = '';
         clearInterval(interval);
         this.writingMessage = false;
     }
 
     static writeMessage(target, message, letterDelay, sendDelay, chatUUID) {
 
+        console.log("WRITEEEEEEEEEEEEEEEEE")
+
         this.writingMessage = true;
 
         const interval = setInterval(() => {
 
             // Chat ended
-            if (chatUUID !== ChatRegistry.getUUID() || $(target)?.get(0)?.classList?.contains("disabled")) {
+            if (!ChatRegistry.isChatting()) {
                 AutoMessageManager.cancelMessage(interval);
                 return;
             }
 
             // If message finished
             if (message.length === 0) {
-                setTimeout(() => $(".sendbtn")?.get(0)?.click(), sendDelay);
-                AutoMessageManager.cancelMessage(interval);
+                console.log("MESSAGE EEEEENNNNNNDD")
+                
+                
+                const sendButton = document.querySelector('.sendButton');
+                setTimeout(() => {
+                    sendButton.dispatchEvent(new MouseEvent('mousedown'));
+                    AutoMessageManager.cancelMessage(interval);
+                }, sendDelay);
                 return;
             }
 
