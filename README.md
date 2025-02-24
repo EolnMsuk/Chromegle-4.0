@@ -1,3 +1,24 @@
+# Project Chruhmegle
+## Working Features
+- Geolocator
+- Calltime Counter
+- Voice Commands eg. omegle skip
+- Ip Blocker
+- "Youve seen this person x time before" counter
+- Greeting Messages
+
+## Broken Features
+- Paste Hotbar
+- Sexual Filter
+- Profanity Filter
+- Blocked Countries
+- Fullscreen tool
+- Screenshot tool
+- Video-Popout tool
+- Auto-Reconnect
+- Auto-Skip Features
+- Theme Settings
+
 Chromegle
 ==================
 A Javascript Chrome (and Opera) Extension for Omegle, certified for Chrome 88 and above. 
