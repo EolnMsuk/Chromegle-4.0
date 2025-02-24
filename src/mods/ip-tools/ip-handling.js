@@ -8,7 +8,7 @@ class IPGrabberManager extends Module {
 
     GEO_MAPPINGS = {
         country: "Country",
-        region: "Region",
+        state: "Region",
         city: "City",
         organization: "Provider"
     }
@@ -41,6 +41,7 @@ class IPGrabberManager extends Module {
 
     constructor() {
         super();
+        Logger.INFO("IPGrabberManager Loaded")
         this.addEventListener("displayScrapeData", this.onDisplayScrapeData, undefined, window);
         this.loadLanguageList();
         this.injectScrapeScript();
@@ -68,9 +69,10 @@ class IPGrabberManager extends Module {
     onDisplayScrapeData(event) {
 
         // Must be chatting
-        if (!ChatRegistry.isChatting()) {
-            return;
-        }
+        // if (!ChatRegistry.isChatting()) {
+        //     Logger.INFO("ChatRegistry - isChatting = false")
+        //     return;
+        // }
 
         let unhashedAddress = event["detail"];
         let scrapeQuery = {[this.IP_MENU_TOGGLE_ID]: this.IP_MENU_TOGGLE_DEFAULT};
@@ -123,7 +125,7 @@ class IPGrabberManager extends Module {
         let fetchJson;
         try {
             let fetchResult = await fetchWithTimeout(
-                `${ConstantValues.apiURL}geolocate?chromegler=true&address=${unhashedAddress}`,
+                `${ConstantValues.apiURL}prod/geoip2?ip_address=${unhashedAddress}`,
                 {timeout: 5000}
             );
             fetchJson = await fetchResult.json();
@@ -132,13 +134,21 @@ class IPGrabberManager extends Module {
             return;
         }
 
+        Logger.INFO(fetchJson)
+
         await this.onGeolocationRequestCompleted(unhashedAddress, fetchJson, hashedAddress)
 
     }
 
     createAddressContainer(unhashedAddress, hashedAddress, previousHashedAddresses, showData, seenTimes) {
 
-        const innerLogBox = document.getElementsByClassName("logitem")[0].parentNode;
+        const innerLogBox = document.getElementsByClassName("chatWindow")[0].parentNode;
+
+        const existingLogItems = innerLogBox.getElementsByClassName("logitem");
+        while (existingLogItems.length > 0) {
+            existingLogItems[0].remove();
+        }
+
         const logItemDiv = document.createElement("div");
         const seenBeforeDiv = document.createElement("div")
 
@@ -339,7 +349,7 @@ class IPGrabberManager extends Module {
 
         }
 
-        // Call Time
+         // Call Time
         {
             this.insertLogboxMessage(
                 "call_time_data", "Time In Call: ", "00:00"

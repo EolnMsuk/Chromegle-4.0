@@ -462,6 +462,7 @@ class IPBlockingMenu {
 
 class IPBlockingManager extends Module {
 
+
     static MENU = new IPBlockingMenu();
     static API = new IPBlockAPI();
 
@@ -470,6 +471,7 @@ class IPBlockingManager extends Module {
 
     constructor() {
         super();
+        Logger.INFO("IPBlockingManager Loaded")
         this.addEventListener("click", this.onButtonClick);
     }
 

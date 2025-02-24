@@ -6,6 +6,7 @@ class SpeechMenu {
     static disable = () => MicroModal.hide(this.settingsModalElementId);
 
     constructor() {
+        console.log("[INFO] (Chromegle) SpeechManager Loaded")
         let modal = document.createElement("div");
         $(modal).load(getResourceURL("public/html/voicecmds.html"));
         $("html").append(modal);
@@ -41,11 +42,13 @@ class SpeechEngineManager extends Module {
 
         let voiceCommandEnabled = config.voiceCommandToggle.fromSettingsUpdateEvent(event);
 
-        if (voiceCommandEnabled === "true" && ChatRegistry.pageStarted()) {
+        if (voiceCommandEnabled === "true") {
             this.#engine.start();
+            Logger.INFO("Voice Commands Started");
         }
-        else if (voiceCommandEnabled === "false" && ChatRegistry.pageStarted()) {
+        else if (voiceCommandEnabled === "false") {
             this.#engine.stop();
+            Logger.INFO("Voice Commands Stopped");
         }
 
     }
@@ -55,6 +58,7 @@ class SpeechEngineManager extends Module {
 
         if (voiceCommandEnabled === "true") {
             this.#engine.start();
+            Logger.INFO("Voice Commands Started");
         }
 
     }

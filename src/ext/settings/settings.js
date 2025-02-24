@@ -2,7 +2,7 @@ let ConstantValues = {
     websiteURL: "https://chromegle.net",
     discordURL: "https://chromegle.net/discord",
     githubURL: "https://chromegle.net/github",
-    apiURL: "https://geo.eulerstream.com/",
+    apiURL: "https://m52o1m3c29.execute-api.eu-central-1.amazonaws.com/",
     _helpfulTips: ["We hope you enjoy our extension as much as we enjoyed making it!"],
     getHelpfulTip: () => {
         return ConstantValues._helpfulTips[[Math.floor(Math.random() * ConstantValues._helpfulTips.length)]]
@@ -15,11 +15,14 @@ let ConstantValues = {
 
 class SettingsManager extends Module {
     #menu = new SettingsMenu();
+    
 
     constructor() {
         super();
         Settings = this;
 
+
+        Logger.INFO("Settings Menu Loaded")
         // Assign button function
         $(ButtonFactory.menuButton).on("click", () => {
             this.#menu.enable();

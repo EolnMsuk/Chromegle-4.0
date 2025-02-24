@@ -15,8 +15,11 @@ class DataLoader {
 class ManifestLoader extends DataLoader {
 
     async run() {
+        console.log("Load Manifest")
         Manifest = await this.fetchJSON(getResourceURL("manifest.json"));
+        console.log("Manifest loaded")
     }
+    
 
 }
 

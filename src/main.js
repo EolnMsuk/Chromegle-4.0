@@ -14,46 +14,49 @@ let Manifest;
         return;
     }
 
-    if (window.location.pathname !== "/") {
-        $("html").css("visibility", "visible");
-        return;
-    }
+    // if (window.location.pathname !== "/") {
+    //     console.log("Uhmegle started")
+    //     $("html").css("visibility", "visible");
+    //     return;
+    // }
+    $("html").css("visibility", "visible");
+    Logger.INFO("Extention Starting, Loading Modules")
 
-    runDataLoaders(
-        ManifestLoader,
-        TipsLoader,
-        VideoPopoutStyleLoader
-    )
+    // runDataLoaders(
+    //     ManifestLoader,
+    //     TipsLoader,
+    //     VideoPopoutStyleLoader
+    // )
 
     loadModules(
-        IPBlockingManager,
-        ThemeManager,
-        TopicSyncManager,
-        ChatRegistryManager,
-        PasteMenu,
-        ChatManager,
-        FilterManager,
-        ConfirmManager,
-        AutoMessageManager,
-        ReconnectManager,
-        IPGrabberManager,
-        UnmoderatedChatManager,
-        SpeechEngineManager,
-        VideoWrapperManager,
-        VideoBlockerManager,
-        VideoScreenshotManager,
-        FullScreenVideoManager,
-        SplashImageHandler,
-        ClearInterestsManager,
-        SettingsManager,
-        TimerSkipManager,
-        RepeatSkipManager,
-        MessageSkipManager,
-        AgeSkipManager,
-        UserCountManager,
-        BroadcastManager,
-        VideoPopoutManager,
-        LinkEmbedManager
+         IPBlockingManager,
+         ThemeManager,
+        // TopicSyncManager,
+         ChatRegistryManager,
+        // PasteMenu,
+         ChatManager,
+        // FilterManager,
+        // ConfirmManager,
+         AutoMessageManager,
+        // ReconnectManager,
+         IPGrabberManager,
+        // UnmoderatedChatManager,
+         SpeechEngineManager,
+        // VideoWrapperManager,
+        // VideoBlockerManager,
+        // VideoScreenshotManager,
+        // FullScreenVideoManager,
+        // SplashImageHandler,
+        // ClearInterestsManager,
+         SettingsManager,
+        // TimerSkipManager,
+        // RepeatSkipManager,
+        // MessageSkipManager,
+        // AgeSkipManager,
+        // UserCountManager,
+        // BroadcastManager,
+        // VideoPopoutManager,
+        // LinkEmbedManager
     );
 
 })();

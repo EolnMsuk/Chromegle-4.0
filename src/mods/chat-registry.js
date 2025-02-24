@@ -39,7 +39,7 @@ class ChatRegistryManager extends Module {
 
     onButtonClick(event) {
 
-        if (event.target.classList.contains("disconnectbtn")) {
+        if (event.target.classList.contains("skipButton")) {
             document.dispatchEvent(new CustomEvent('chatButtonClicked', {detail: event}));
         }
 
@@ -78,9 +78,10 @@ class ChatRegistryManager extends Module {
 
     onMutationRecord(mutationRecord) {
 
-        if (!this.#pageStarted) {
-            return;
-        }
+        // if (!this.#pageStarted) {
+            
+        //     return;
+        // }
 
         // Chat Loaded
         if (mutationRecord.target.id === "othervideospinner") {
@@ -104,12 +105,12 @@ class ChatRegistryManager extends Module {
         }
 
         // Disconnect button
-        if (mutationRecord.target.classList.contains('disconnectbtn')) {
-            document.dispatchEvent(new CustomEvent('disconnectBtnMutation', {detail: mutationRecord}))
+        if (mutationRecord.target.classList.contains('skipButton')) {
+            document.dispatchEvent(new CustomEvent('skipButtonMutation', {detail: mutationRecord}))
         }
 
         // REGULAR STUFF
-        if (mutationRecord.target.classList.contains("chatmsg")) {
+        if (mutationRecord.target.classList.contains("information")) {
             this.onChatMutationRecord(mutationRecord);
         }
 
@@ -179,11 +180,14 @@ class ChatRegistryManager extends Module {
 
         if (!this.pageStarted()) {
             this.#pageStarted = true;
-            this.#isVideoChat = $("#videowrapper").get(0) != null;
+            this.#isVideoChat = $(".videoContainer").get(0) != null;
             document.dispatchEvent(new CustomEvent('pageStarted', {detail: {button: mutationRecord.target, isVideoChat: this.isVideoChat()}}));
         }
 
-        const containsDisabled = mutationRecord.target.classList.contains("disabled");
+        const targetElement = mutationRecord.target;
+        const containsDisabled = !targetElement.textContent.includes("You're now chatting with a random stranger");
+
+        //const containsDisabled = mutationRecord.target.classList.contains("disabled");
 
         if (this.isChatting() && containsDisabled) {
             Logger.INFO("Chat Ended: UUID <%s>", this.getUUID());

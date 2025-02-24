@@ -42,7 +42,7 @@ class SkipIntentHandler extends AbstractIntentHandler {
     constructor() {
         super();
         this.setName("Skip Chat");
-        this.addUtterances("skip chat", "next chat", "snapchat", "nest chat", "text chat", "next track");
+        this.addUtterances("skip", "skip chat", "next chat", "snapchat", "nest chat", "text chat", "next track");
     }
 
     handle(utterance) {
@@ -96,12 +96,15 @@ class MessageIntentHandler extends AbstractIntentHandler {
 
     constructor() {
         super();
+        Logger.INFO("MessageIntentHandler Loaded")
         this.setName("Send Message");
         this.addUtterances("send message", "send a message");
     }
 
     handle(utterance) {
 
+
+        Logger.DEBUG("MessageIntentHandler HANDLE TRIGGER")
         // Already writing
         if (AutoMessageManager.writingMessage) {
             Logger.ERROR("Failed to send voice message, an auto-message is currently in progress.");
@@ -121,7 +124,7 @@ class MessageIntentHandler extends AbstractIntentHandler {
 
             // Send Message
             AutoMessageManager.writeMessage(
-                $(".chatmsg"),
+                $(".messageInput"),
                 textContent,
                 timePerMessage,
                 withDelay * 1000,
