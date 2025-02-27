@@ -2,7 +2,7 @@
   "name": "Chromegle - Omegle IP & Client",
   "description": "Elevate your Omegle experience with IP information, custom themes, automation and other general improvements.",
   "author": "Isaac Kogan",
-  "homepage_url": "https://chromegle.net",
+  "homepage_url": "https://uhmegle.com/",
   "manifest_version": 3,
   "version": "4.5.5",
   "icons": {
@@ -27,7 +27,6 @@
         "src/ext/utilities/utilities.js",
         "src/core/module.js",
         "src/core/elements.js",
-        "src/core/data-loaders.js",
         "src/mods/chat-registry.js",
         "src/mods/chat-manager.js",
         "src/mods/auto-message.js",
@@ -65,9 +64,7 @@
         "src/main.js"
       ],
       "matches": [
-        "*://*.omegleweb.com/*",
-        "*://*.omegle.com/*", 
-        "*://*.anotherwebsite.com/*" 
+        "*://*.uhmegle.com/*"
       ]
     }
   ],
@@ -77,12 +74,13 @@
         "/manifest.json",
         "/public/themes/types/*",
         "/public/*",
-        "/src/ext/scrape-ips.js"
+        "/src/ext/scrape-ips.js",
+        "/public/html/blocked.html",
+        "/public/html/voicecmds.html",
+        "/public/images/SettingsButton.png"
       ],
       "matches": [
-        "*://*.omegleweb.com/*",
-        "*://*.omegle.com/*", 
-        "*://*.anotherwebsite.com/*" 
+        "*://*.uhmegle.com/*"
       ]
     }
   ],
@@ -92,9 +90,7 @@
   ],
   "externally_connectable": {
     "matches": [
-      "*://*.omegleweb.com/*",
-      "*://*.omegle.com/*",
-      "*://*.anotherwebsite.com/*" 
+      "*://*.uhmegle.com/*"
     ]
   }
 }
