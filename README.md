@@ -24,7 +24,7 @@ Manual installation is fairly easy thanks to Chrome's great developer support:
 6. Use on https://www.omegle.com/ freely
 ```
 
-Alternatively, get it on the [Chrome Webstore](https://chrome.google.com/webstore/search/Chromegle) and use normally.
+
 
 ## Authors
 
