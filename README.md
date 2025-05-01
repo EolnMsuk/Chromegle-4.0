@@ -29,6 +29,8 @@ Alternatively, get it on the [Chrome Webstore](https://chrome.google.com/webstor
 ## Authors
 
 * **Isaac Kogan** - *Initial work* - [isaackogan](https://github.com/isaackogan)
+* **flouflouit** - *Migration to Uhmegle* - [flouflouit](https://github.com/flouflouit)
+* *LR7* - *Initial Work for Thundr Support*
 
 See also the list of [contributors](https://github.com/ChromegleApp/Chromegle/contributors) who participated in this project.
 
