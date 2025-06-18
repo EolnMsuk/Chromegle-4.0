@@ -71,9 +71,19 @@ class ChatRegistryManager extends Module {
 
         });
 
-        for (let mutationRecord of mutations) {
-           this.onMutationRecord(mutationRecord);
+        for (let mutation of mutations) {
+            mutation.addedNodes?.forEach(node => {
+                if (
+                    node.nodeType === 1 &&
+                    node.classList.contains("information")
+                ) {
+                    this.onChatMutationRecord({ target: node });
+                }
+            });
+
+            this.onMutationRecord(mutation);
         }
+
     }
 
     onMutationRecord(mutationRecord) {
@@ -177,49 +187,51 @@ class ChatRegistryManager extends Module {
 
 
     onChatMutationRecord(mutationRecord) {
+        const el = mutationRecord.target;
 
-        if (!this.pageStarted()) {
-            this.#pageStarted = true;
-            this.#isVideoChat = $(".videoContainer").get(0) != null;
-            document.dispatchEvent(new CustomEvent('pageStarted', {detail: {button: mutationRecord.target, isVideoChat: this.isVideoChat()}}));
-        }
-
-        const targetElement = mutationRecord.target;
-        const containsDisabled = !targetElement.textContent.includes("You're now chatting with a random stranger");
-
-        //const containsDisabled = mutationRecord.target.classList.contains("disabled");
-
-        if (this.isChatting() && containsDisabled) {
-            Logger.INFO("Chat Ended: UUID <%s>", this.getUUID());
-            this.#isChatting = false;
-            let uuid = this.getUUID() + '';
-            this.#clearUUID();
-            this.#messages = [];
-            document.dispatchEvent(
-                new CustomEvent('chatEnded',
-                        {
-                            detail: {
-                                "button": mutationRecord.target,
-                                "isVideoChat": this.isVideoChat(),
-                                "uuid": uuid
-                            }
-                        }
-                    )
-            );
+        if (
+            el.id === "information" &&
+            el.closest("#mainMessages") == null &&
+            el.textContent.includes("You're now chatting with a random stranger")
+        ) {
+            if (!this.#isChatting) {
+                this.#isChatting = true;
+                this.#videoChatLoaded = false;
+                this.#setUUID();
+                Logger.INFO("Chat Started: UUID <%s>", this.getUUID());
+                document.dispatchEvent(new CustomEvent("chatStarted", {
+                    detail: {
+                        button: el,
+                        uuid: this.getUUID(),
+                        isVideoChat: this.isVideoChat()
+                    }
+                }));
+            }
             return;
         }
 
-        if (!this.isChatting() && !containsDisabled) {
-            this.#isChatting = true;
-            this.#videoChatLoaded = false;
-            this.#setUUID();
-            Logger.INFO("Chat Started: UUID <%s>", this.getUUID());
-            document.dispatchEvent(
-                new CustomEvent('chatStarted', {detail: {button: mutationRecord.target, uuid: this.getUUID(), isVideoChat: this.isVideoChat()}})
-            );
+        if (
+            el.classList.contains("information") &&
+            el.closest("#mainMessages") == null &&
+            el.textContent.includes("Looking for someone you can chat with...")
+        ) {
+            if (this.#isChatting) {
+                Logger.INFO("Chat Ended: UUID <%s>", this.getUUID());
+                const uuid = this.getUUID();
+                this.#isChatting = false;
+                this.#clearUUID();
+                this.#messages = [];
+                document.dispatchEvent(new CustomEvent("chatEnded", {
+                    detail: {
+                        button: el,
+                        uuid,
+                        isVideoChat: this.isVideoChat()
+                    }
+                }));
+            }
         }
-
     }
+
 
 }
 
