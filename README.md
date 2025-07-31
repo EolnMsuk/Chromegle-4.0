@@ -19,7 +19,7 @@
 - Fullscreen tool
 - Screenshot tool
 - Video-Popout tool
-- Auto-Skip Age - Untested
+- Auto-Skip Age
 - Theme Settings
 
 Chromegle
