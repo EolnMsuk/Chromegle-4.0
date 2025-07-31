@@ -39,7 +39,7 @@ Modal Styling
 }
 
 .settingsModalCloseButton:hover {
-    color: #6B6B6B;
+    color: #f32929;
 }
 
 .settingsCollapsableItem {
@@ -47,7 +47,7 @@ Modal Styling
 }
 
 .tableItemLabel, .tableItemSubLabel {
-    color: #424242
+    color: #c92121
 }
 
 .editToggleDisabled {

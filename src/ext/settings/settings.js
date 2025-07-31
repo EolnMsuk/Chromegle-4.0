@@ -15,7 +15,6 @@ let ConstantValues = {
 
 class SettingsManager extends Module {
     #menu = new SettingsMenu();
-    
 
     constructor() {
         super();

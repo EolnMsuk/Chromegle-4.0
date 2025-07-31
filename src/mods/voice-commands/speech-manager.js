@@ -28,7 +28,7 @@ class SpeechEngineManager extends Module {
 
     static Menu = new SpeechMenu();
     #engine = new SpeechEngine(
-        ["omegle", "amigo", "omigo"],
+        ["omegle", "amigo", "omigo", "uhmegle"],
         "speechEngineCommand",
         [
             new SkipIntentHandler(),

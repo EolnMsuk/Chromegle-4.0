@@ -9,6 +9,7 @@ class IPGrabberManager extends Module {
     GEO_MAPPINGS = {
         country: "Country",
         state: "Region",
+        state: "Region",
         city: "City",
         organization: "Provider"
     }
@@ -68,6 +69,7 @@ class IPGrabberManager extends Module {
 
     onDisplayScrapeData(event) {
 
+        logger.DEBUG("onDisplayScrapeData fired")
         // Must be chatting
         // if (!ChatRegistry.isChatting()) {
         //     Logger.INFO("ChatRegistry - isChatting = false")
@@ -133,6 +135,7 @@ class IPGrabberManager extends Module {
             await this.onGeolocationRequestError(unhashedAddress);
             return;
         }
+
 
         await this.onGeolocationRequestCompleted(unhashedAddress, fetchJson, hashedAddress)
 

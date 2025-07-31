@@ -1,8 +1,8 @@
 {
-  "name": "Chromegle - Uhmegle IP & Client",
-  "description": "Elevate your Uhmegle experience with IP information, custom themes, automation and other general improvements.",
-  "author": "Isaac Kogan",
-  "homepage_url": "https://uhmegle.com/",
+  "name": "Chromegle Reborn - Omegle IP & Client",
+  "description": "Elevate your Omegle experience with IP information, custom themes, automation and other general improvements.",
+  "author": "Chromegle.org",
+  "homepage_url": "https://chromegle.org/",
   "manifest_version": 3,
   "version": "4.5.6",
   "icons": {
@@ -16,6 +16,7 @@
   },
   "content_scripts": [
     {
+
       "css": [
         "public/css/main.css",
         "public/css/settings.css"
@@ -74,6 +75,10 @@
         "/manifest.json",
         "/public/themes/types/*",
         "/public/*",
+        "/src/ext/scrape-ips.js",
+        "/public/html/blocked.html",
+        "/public/html/voicecmds.html",
+        "/public/images/SettingsButton.png",
         "/src/ext/scrape-ips.js",
         "/public/html/blocked.html",
         "/public/html/voicecmds.html",

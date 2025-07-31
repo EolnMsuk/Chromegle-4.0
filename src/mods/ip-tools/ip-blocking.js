@@ -462,7 +462,6 @@ class IPBlockingMenu {
 
 class IPBlockingManager extends Module {
 
-
     static MENU = new IPBlockingMenu();
     static API = new IPBlockAPI();
 
