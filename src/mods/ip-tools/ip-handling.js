@@ -9,7 +9,6 @@ class IPGrabberManager extends Module {
     GEO_MAPPINGS = {
         country: "Country",
         state: "Region",
-        state: "Region",
         city: "City",
         organization: "Provider"
     }

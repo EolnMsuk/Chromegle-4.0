@@ -177,7 +177,7 @@ html {
 }
 
 .statusItem {
-    color: hwb(0 9% 7%);
+    color: #208ffe;
     font-size: .9em;
     font-weight: bold;
     margin: 0;
@@ -416,7 +416,7 @@ code {
 }
 
 #broadcast > .broadcase-close:hover {
-    color: #e72525;
+    color: #6b6b6b;
 }
 
 #broadcast > .broadcase-close:active {
@@ -778,7 +778,7 @@ MODAL FALLBACK START
 }
 
 .settingsModalCloseButton:hover {
-    color: #da4646;
+     color: #6B6B6B;
 }
 
 .settingsCollapsableItem {
