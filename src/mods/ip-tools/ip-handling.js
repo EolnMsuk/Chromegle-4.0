@@ -67,8 +67,6 @@ class IPGrabberManager extends Module {
     }
 
     onDisplayScrapeData(event) {
-
-        logger.DEBUG("onDisplayScrapeData fired")
         // Must be chatting
         // if (!ChatRegistry.isChatting()) {
         //     Logger.INFO("ChatRegistry - isChatting = false")
