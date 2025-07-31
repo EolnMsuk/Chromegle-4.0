@@ -37,7 +37,6 @@ A Javascript Chrome (and Opera) Extension for Uhmegle, certified for Chrome 137 
 
 Manual installation is fairly easy thanks to Chrome's great developer support:
 ```
-
 1. Clone Repository on GitHub to Computer & Unzip
 2. Navigate to chrome://extensions/ web-page
 3. Enable "Developer Tools" on top-right of page
