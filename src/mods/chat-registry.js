@@ -125,50 +125,49 @@ class ChatRegistryManager extends Module {
         }
 
         // Chat Log
-        if (mutationRecord?.addedNodes?.[0]?.classList?.contains("logitem")) {
-            this.onLogItemAdded(mutationRecord.addedNodes[0])
+        for (const node of mutationRecord.addedNodes) {
+            if (!(node instanceof HTMLElement)) continue;
+
+            if (
+                node.classList.contains("tempMessage") ||
+                node.querySelector("span.You") ||
+                node.querySelector("span.Stranger")
+            ) {
+                this.onLogItemAdded(node);
+            }
         }
+
 
     }
 
     onLogItemAdded(logItemNode) {
+        Logger.DEBUG('log trigger', logItemNode.outerHTML);
 
-        let innerNode = logItemNode?.childNodes?.[0];
-
-        // Determine if user message
-        if (this.containsOneOfClasses(innerNode, "youmsg", "strangermsg")) {
-
-
-            let isUser = innerNode.classList.contains("youmsg");
-            let idx = this.#messages.length;
-            let message = new ChatMessage(isUser, innerNode?.childNodes?.[2].textContent, innerNode, idx);
-
-            this.#messages.push(message);
-            document.dispatchEvent(new CustomEvent('chatMessage', {detail: message}))
+        const span = logItemNode.querySelector("span");
+        if (!span) {
+            Logger.WARNING('No span found in chat message');
+            return;
         }
 
-        // On mobile
-        if (this.containsOneOfClasses(innerNode, "strangermsggroup", "youmsggroup")) {
+        const isUser = span.classList.contains("You");
+        const isStranger = span.classList.contains("Stranger");
 
-            let isUser = innerNode.classList.contains("youmsggroup");
-            let idx = this.#messages.length;
+        if (isUser || isStranger) {
+            const idx = this.#messages.length;
 
-            let innerElement = innerNode?.childNodes?.[0]?.childNodes?.[0];
+            const rawText = logItemNode.textContent || "";
+            const label = span.textContent || "";
+            const messageText = rawText.replace(label, "").trim();
 
-            let message = new ChatMessage(
-                isUser,
-                innerElement?.childNodes?.[0].textContent,
-                innerElement,
-                idx
-            );
-
+            const message = new ChatMessage(isUser, messageText, logItemNode, idx);
             this.#messages.push(message);
-            document.dispatchEvent(new CustomEvent('chatMessage', {detail: message}))
 
+            document.dispatchEvent(new CustomEvent("chatMessage", { detail: message }));
+            Logger.DEBUG(`Captured message #${idx + 1} (${isUser ? "You" : "Stranger"}): ${messageText}`);
         }
-
-
     }
+
+
 
     containsOneOfClasses(node, ...classes) {
 

@@ -134,8 +134,6 @@ class IPGrabberManager extends Module {
             return;
         }
 
-        Logger.INFO(fetchJson)
-
         await this.onGeolocationRequestCompleted(unhashedAddress, fetchJson, hashedAddress)
 
     }

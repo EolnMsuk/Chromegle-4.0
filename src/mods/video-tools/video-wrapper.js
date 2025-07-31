@@ -1,12 +1,11 @@
 class VideoWrapperManager extends Module {
-
     static mobileSupported = false;
-    static otherVideoWrapperId = "otherVideoWrapper";
-    static selfVideoWrapperId = "selfVideoWrapper";
+    static remoteWrapperId = "remoteVideoWrapper";
+    static localWrapperId = "localVideoWrapper";
 
     config = {
-        othervideo: VideoWrapperManager.otherVideoWrapperId,
-        selfvideo: VideoWrapperManager.selfVideoWrapperId
+        remoteVideo: VideoWrapperManager.remoteWrapperId,
+        localVideo: VideoWrapperManager.localWrapperId
     }
 
     #observer = new MutationObserver(this.onMutationObserved.bind(this));
@@ -22,67 +21,68 @@ class VideoWrapperManager extends Module {
         }
 
         this.wrapVideos();
-        this.#observer.observe(
-            document.getElementById("videowrapper"),
-            {subtree: true, childList: true, attributes: true, attributeFilter: ['style']}
-        );
 
+        const remoteVideo = document.getElementById("remoteVideo");
+        const localVideo = document.getElementById("localVideo");
 
+        if (remoteVideo) {
+            this.#observer.observe(remoteVideo, {
+                subtree: false,
+                childList: false,
+                attributes: true,
+                attributeFilter: ["style"]
+            });
+        }
 
+        if (localVideo) {
+            this.#observer.observe(localVideo, {
+                subtree: false,
+                childList: false,
+                attributes: true,
+                attributeFilter: ["style"]
+            });
+        }
     }
 
-    onMutationObserved(mutation) {
+    onMutationObserved(mutations) {
+        for (const mutation of mutations) {
+            const target = mutation.target;
+            const id = target.id;
 
-        for (let mutationRecord of mutation) {
-            if (mutationRecord.target.id === "othervideo" || mutationRecord.target.id === "selfvideo") {
-
-                this.updateWrapperDimensions(
-                    this.config[mutationRecord.target.id],
-                    mutationRecord.target
-                );
-
+            if (id === "remoteVideo" || id === "localVideo") {
+                const wrapperId = this.config[id];
+                this.updateWrapperDimensions(wrapperId, target);
             }
-
         }
     }
 
-    updateWrapperDimensions(wrapperId, target) {
+    updateWrapperDimensions(wrapperId, videoElement) {
+        const wrapper = document.getElementById(wrapperId);
+        if (!wrapper) return;
 
-        let wrapper = $(`#${wrapperId}`)
-            .css("width", target.style.width)
-            .css("height", target.style.height)
+        wrapper.style.width = videoElement.style.width || "";
+        wrapper.style.height = videoElement.style.height || "";
 
-        if (target.style.top) {
-            wrapper.css("top", target.style.top);
-            target.style.top = "";
+        if (videoElement.style.top) {
+            wrapper.style.top = videoElement.style.top;
+            videoElement.style.top = "";
         }
-
     }
 
     wrapVideos() {
+        const remoteVideo = document.getElementById("remoteVideo");
+        const localVideo = document.getElementById("localVideo");
 
-        let otherVideo = $("#othervideo");
-        let selfVideo = $("#selfvideo");
+        if (remoteVideo && !remoteVideo.parentElement.id.includes(VideoWrapperManager.remoteWrapperId)) {
+            remoteVideo.wrap(`<div id='${VideoWrapperManager.remoteWrapperId}'></div>`);
+            this.updateWrapperDimensions(VideoWrapperManager.remoteWrapperId, remoteVideo);
+        }
 
-        // Do the wrap
-        otherVideo.wrap(`<div id='${VideoWrapperManager.otherVideoWrapperId}'></div>`);
-        selfVideo.wrap(`<div id='${VideoWrapperManager.selfVideoWrapperId}'></div>`);
+        if (localVideo && !localVideo.parentElement.id.includes(VideoWrapperManager.localWrapperId)) {
+            localVideo.wrap(`<div id='${VideoWrapperManager.localWrapperId}'></div>`);
+            this.updateWrapperDimensions(VideoWrapperManager.localWrapperId, localVideo);
+        }
 
-        // Update dimensions for the first time (further will be handled by MutationObserver)
-        this.updateWrapperDimensions(
-            VideoWrapperManager.otherVideoWrapperId,
-            otherVideo.get(0)
-        );
-
-        this.updateWrapperDimensions(
-            VideoWrapperManager.selfVideoWrapperId,
-            selfVideo.get(0)
-        );
-
-
-        // Emit event
         document.dispatchEvent(new CustomEvent('wrappedVideos'));
-
     }
-
 }

@@ -47,6 +47,7 @@ class MessageSkipManager extends Module {
     }
 
     onChatMessage(event) {
+        Logger.DEBUG('Chat detected');
 
         // Disabled module OR already checked first N.
         if (!this.#enabled || this.#checkedCount > this.#maxCheckedCount) {
