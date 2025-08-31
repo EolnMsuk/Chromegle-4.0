@@ -66,8 +66,6 @@ Manual installation is fairly easy thanks to Chrome's great developer support:
 
 * **EolnMsuk** - *Additional Feaetures* - [EolnMsuk](https://github.com/EolnMsuk)
 
-See also the list of [contributors](https://github.com/ChromegleApp/Chromegle/contributors) who participated in this project.
-
 ## License
 
 This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) file for details.
