@@ -179,7 +179,6 @@ class IPGrabberManager extends Module {
                 {timeout: 5000}
             );
             fetchJson = await fetchResult.json();
-        console.log('API RESPONSE:', JSON.stringify(fetchJson, null, 2));
         } catch (ex) {
             await this.onGeolocationRequestError(unhashedAddress);
             return;
