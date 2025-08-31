@@ -226,8 +226,8 @@ class IPGrabberManager extends Module {
             return false;
         }
         
-        // Use a consistent delay instead of cooldown logic
-        setTimeout(() => skipIfPossible(), 1500);
+        // Use the intelligent skip function
+        performDebouncedSkip();
 
         Logger.INFO("Detected user from blocked country in chat with UUID <%s>, skipped.", ChatRegistry.getUUID());
         sendErrorLogboxMessage(`Detected user from blocked country ${geoJSON["country"]} (${code}), skipped chat.`);
