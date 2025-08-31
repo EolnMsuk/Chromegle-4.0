@@ -175,7 +175,7 @@ class IPGrabberManager extends Module {
         try {
             // THIS URL should be YOUR NEW API's URL
             let fetchResult = await fetchWithTimeout( 
-                `https://your-new-api.com/lookup?ip=${unhashedAddress}`,
+                `${ConstantValues.apiURL}prod/geoip2?ip_address=${unhashedAddress}`,
                 {timeout: 5000}
             );
             fetchJson = await fetchResult.json();
