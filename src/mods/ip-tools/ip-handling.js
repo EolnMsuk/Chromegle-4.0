@@ -389,6 +389,7 @@ class IPGrabberManager extends Module {
             );
 
             // Languages
+            /*
             if (this.languages != null) {
                 let userLanguages = this.languages[geoJSON.country_code]?.join(", ") || null;
                 if (userLanguages != null) {
@@ -397,6 +398,7 @@ class IPGrabberManager extends Module {
                     )
                 }
             }
+            */
         }
 
         // Local Time
