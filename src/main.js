@@ -1,3 +1,5 @@
+let isOnSkipCooldown = false;
+
 /** @type {SettingsManager} */
 let Settings;
 
