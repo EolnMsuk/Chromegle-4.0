@@ -461,4 +461,3 @@ class IPGrabberManager extends Module {
         return youMsgClass;
     }
 }
-}
