@@ -2,7 +2,7 @@
   "name": "Chromegle-4.0",
   "description": "Elevate your Omegle experience with IP information, custom themes, automation and other general improvements.",
   "author": "github.com/EolnMsuk",
-  "homepage_url": "discord.gg/omeglestream",
+  "homepage_url": "https://discord.gg/omeglestream",
   "manifest_version": 4,
   "version": "4.5",
   "icons": {
