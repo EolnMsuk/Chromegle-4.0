@@ -64,6 +64,8 @@ Manual installation is fairly easy thanks to Chrome's great developer support:
 
 * **xanzinfl** - *Additional Feature Support* - [xanzinfl](https://github.com/xanzinfl)
 
+* **EolnMsuk** - *Additional Feaeture Suppart* - [EolnMsuk](https://github.com/EolnMsuk)
+
 See also the list of [contributors](https://github.com/ChromegleApp/Chromegle/contributors) who participated in this project.
 
 ## License
