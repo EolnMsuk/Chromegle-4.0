@@ -173,8 +173,9 @@ class IPGrabberManager extends Module {
         // Geolocation request
         let fetchJson;
         try {
-            let fetchResult = await fetchWithTimeout(
-                `${ConstantValues.apiURL}prod/geoip2?ip_address=${unhashedAddress}`,
+            // THIS URL should be YOUR NEW API's URL
+            let fetchResult = await fetchWithTimeout( 
+                `https://your-new-api.com/lookup?ip=${unhashedAddress}`,
                 {timeout: 5000}
             );
             fetchJson = await fetchResult.json();
@@ -182,7 +183,24 @@ class IPGrabberManager extends Module {
             await this.onGeolocationRequestError(unhashedAddress);
             return;
         }
+        
+        // =================================================================
+        // === START OF NEW CODE ===========================================
+        // =================================================================
 
+        // 1. Get the country name from your new API's response.
+        //    IMPORTANT: Change 'country' if your API uses a different field name!
+        const countryName = fetchJson.country; 
+
+        // 2. Use the map to find the two-letter code.
+        const countryCode = countryNameToCode[countryName] || 'XX'; // 'XX' is a fallback
+
+        // 3. Add the required 'country_code' field back into the JSON object.
+        fetchJson.country_code = countryCode;
+
+        // =================================================================
+        // === END OF NEW CODE =============================================
+        // =================================================================
 
         await this.onGeolocationRequestCompleted(unhashedAddress, fetchJson, hashedAddress)
 
