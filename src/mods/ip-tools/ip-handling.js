@@ -228,7 +228,13 @@ class IPGrabberManager extends Module {
             return;
         }
 
-        setTimeout(() => skipIfPossible(), Math.floor(Math.random() * 1000) + 50);
+        // Skip using cooldown logic
+        if (isOnSkipCooldown) return true; // Already skipping, do nothing.
+        isOnSkipCooldown = true; // Start the cooldown.
+        skipIfPossible();
+        setTimeout(() => { isOnSkipCooldown = false; }, 2000); // End cooldown after 2 seconds.
+
+        // Log message
         Logger.INFO("Detected user from blocked country in chat with UUID <%s>, skipped.", ChatRegistry.getUUID());
         sendErrorLogboxMessage(`Detected user from blocked country ${geoJSON["country"]} (${code}), skipped chat.`);
         return true;
