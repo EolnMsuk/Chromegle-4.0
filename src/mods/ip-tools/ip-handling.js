@@ -60,7 +60,6 @@ class IPGrabberManager extends Module {
         country: "Country",
         state: "State",
         city: "City",
-        isp: "Provider"
     }
 
     ipGrabberDiv = null;
@@ -117,16 +116,9 @@ class IPGrabberManager extends Module {
     }
 
     onDisplayScrapeData(event) {
-        // Must be chatting
-        // if (!ChatRegistry.isChatting()) {
-        //     Logger.INFO("ChatRegistry - isChatting = false")
-        //     return;
-        // }
-
         let unhashedAddress = event["detail"];
         let scrapeQuery = {[this.IP_MENU_TOGGLE_ID]: this.IP_MENU_TOGGLE_DEFAULT};
 
-        // Check if show data is enabled, hash the address, run through block manager
         chrome.storage.sync.get(scrapeQuery, async (result) => {
             let showData = result[this.IP_MENU_TOGGLE_ID] === "true";
             let hashedAddress = await sha1(unhashedAddress);
@@ -137,9 +129,7 @@ class IPGrabberManager extends Module {
             }
 
             await this.geolocateAndDisplay(showData, unhashedAddress, hashedAddress);
-
         });
-
     }
 
     sendChatSeenEvent(seenTimes, unhashedAddress) {
@@ -153,17 +143,17 @@ class IPGrabberManager extends Module {
                 }
             }
         ));
-
     }
 
     async geolocateAndDisplay(showData, unhashedAddress, hashedAddress) {
         let previousQuery = {"PREVIOUS_HASHED_ADDRESS_LIST": {}};
-
         let result = await chrome.storage.local.get(previousQuery);
 
         const previouslyHashed = result["PREVIOUS_HASHED_ADDRESS_LIST"];
         const seenTimes = previouslyHashed[hashedAddress] || 0;
         this.sendChatSeenEvent(seenTimes, unhashedAddress);
+        
+        // Pass seenTimes to createAddressContainer
         this.createAddressContainer(unhashedAddress, hashedAddress, previouslyHashed, showData, seenTimes);
 
         // Update times seen
@@ -173,7 +163,6 @@ class IPGrabberManager extends Module {
         // Geolocation request
         let fetchJson;
         try {
-            // THIS URL should be YOUR NEW API's URL
             let fetchResult = await fetchWithTimeout( 
                 `${ConstantValues.apiURL}prod/geoip2?ip_address=${unhashedAddress}`,
                 {timeout: 5000}
@@ -184,30 +173,16 @@ class IPGrabberManager extends Module {
             return;
         }
         
-        // =================================================================
-        // === START OF NEW CODE ===========================================
-        // =================================================================
-
-        // 1. Get the country name from your new API's response.
-        //    IMPORTANT: Change 'country' if your API uses a different field name!
+        // Country code conversion
         const countryName = fetchJson.country; 
-
-        // 2. Use the map to find the two-letter code.
-        const countryCode = countryNameToCode[countryName] || 'XX'; // 'XX' is a fallback
-
-        // 3. Add the required 'country_code' field back into the JSON object.
+        const countryCode = countryNameToCode[countryName] || 'XX';
         fetchJson.country_code = countryCode;
 
-        // =================================================================
-        // === END OF NEW CODE =============================================
-        // =================================================================
-
-        await this.onGeolocationRequestCompleted(unhashedAddress, fetchJson, hashedAddress)
-
+        // Pass seenTimes to onGeolocationRequestCompleted
+        await this.onGeolocationRequestCompleted(unhashedAddress, fetchJson, hashedAddress, seenTimes);
     }
 
     createAddressContainer(unhashedAddress, hashedAddress, previousHashedAddresses, showData, seenTimes) {
-
         const innerLogBox = document.getElementsByClassName("chatWindow")[0].parentNode;
 
         const existingLogItems = innerLogBox.getElementsByClassName("logitem");
@@ -215,31 +190,17 @@ class IPGrabberManager extends Module {
             existingLogItems[0].remove();
         }
 
-        const logItemDiv = document.createElement("div");
-        const seenBeforeDiv = document.createElement("div")
-
         this.ipGrabberDiv = document.createElement("div");
         this.ipGrabberDiv.style.display = showData ? "" : "none";
-
         this.ipGrabberDiv.classList.add("logitem");
-        logItemDiv.classList.add("logitem");
-        seenBeforeDiv.classList.add("logitem");
-
-        const plural = (seenTimes > 1 || seenTimes === 0) ? "s" : "";
-        seenBeforeDiv.appendChild(
-            $(`<span class='statuslog'>You've seen this person ${seenTimes} time${plural} before.</span>`).get(0)
-        );
 
         this.ipToggleButton.html(showData ? this.DISABLE_TAG : this.ENABLE_TAG);
         innerLogBox.appendChild(this.ipToggleButton.get(0));
         innerLogBox.appendChild(this.ipGrabberDiv);
-        innerLogBox.append(seenBeforeDiv);
-
     }
 
     async insertUnhashedAddress(unhashedAddress, isOwner = false) {
         let ipSpoiler = await (new IPAddressSpoiler(unhashedAddress)).setup();
-
         let ipMessage = this.createLogBoxMessage(
             "address_data", "IP Address: ", ipSpoiler.get()
         );
@@ -247,8 +208,7 @@ class IPGrabberManager extends Module {
         if (!isOwner) {
             ipMessage.appendChild(ButtonFactory.ipBlockButton(unhashedAddress));
         }
-
-        this.ipGrabberDiv.appendChild(ipMessage); // Add the IP first
+        this.ipGrabberDiv.appendChild(ipMessage);
     }
 
     async onGeolocationRequestError(unhashedAddress) {
@@ -258,76 +218,47 @@ class IPGrabberManager extends Module {
 
     async skipBlockedCountries(countrySkipEnabled, geoJSON) {
         const code = geoJSON["country_code"] || geoJSON["country_code3"];
-
-        // Pre-conditions
         if (!countrySkipEnabled || !code) {
             return false;
         }
 
-        // If blocked
         const countryBlocked = (await config.countrySkipInfo.retrieveValue() || "").toUpperCase().includes(code);
         if (!countryBlocked) {
             return;
         }
 
-        // Skip
         setTimeout(() => skipIfPossible(), Math.floor(Math.random() * 1000) + 50);
-
-        // Log message
         Logger.INFO("Detected user from blocked country in chat with UUID <%s>, skipped.", ChatRegistry.getUUID());
         sendErrorLogboxMessage(`Detected user from blocked country ${geoJSON["country"]} (${code}), skipped chat.`);
-
         return true;
     }
 
     containsValidKeys(obj, ...keys) {
         let keyList = Object.keys(obj);
-
         for (let key of keys) {
             if (!keyList.includes(key) || !obj[key] || obj[key] === '') {
                 return false;
             }
         }
-
         return true;
-
     }
 
-    /**
-     *
-     * @param unhashedAddress 192.168.0.1 formatted IP
-     * @param hashedAddress Hashed IP address
-     * @param geoJSON.ip 192.168.0.1 formatted IP
-     * @param geoJSON JSON payload from API
-     * @param geoJSON.owner true|false Whether owner is there
-     * @param geoJSON.chromegler true|false Whether user is Chromegler
-     * @param geoJSON.longitude Longitude
-     * @param geoJSON.latitude Latitude
-     * @param geoJSON.country Country
-     * @param geoJSON.country_code CA formatted country code
-     * @param geoJSON.accuracy Kilometre accuracy of geolocation
-     * @param geoJSON.timezone Request timezone
-     */
-    async onGeolocationRequestCompleted(unhashedAddress, geoJSON, hashedAddress) {
+    async onGeolocationRequestCompleted(unhashedAddress, geoJSON, hashedAddress, seenTimes) { // Accept seenTimes
         await this.insertUnhashedAddress(geoJSON?.ip || unhashedAddress, geoJSON?.owner || false);
 
         const countrySkipEnabled = await config.countrySkipToggle.retrieveValue() === "true";
-
-        // Handle blocked countries
         if (await this.skipBlockedCountries(countrySkipEnabled, geoJSON)) {
             return;
         }
 
-        // Log information
         Logger.DEBUG(
             "Received IP Scraping data for chat UUID <%s> from the Chromegle web-server as the following JSON payload: \n\n%s",
             ChatRegistry.getUUID(),
             JSON.stringify(geoJSON, null, 2)
         );
-
-        // Display geolocation-based fields
-        await this.displayGeolocationFields(geoJSON, hashedAddress);
-
+        
+        // Pass seenTimes to displayGeolocationFields
+        await this.displayGeolocationFields(geoJSON, hashedAddress, seenTimes);
     }
 
     insertLogboxMessage(elementId, label, ...values) {
@@ -340,16 +271,57 @@ class IPGrabberManager extends Module {
         return parseFloat(num).toFixed(2);
     }
 
-    async displayGeolocationFields(geoJSON, hashedAddress) {
+    async displayGeolocationFields(geoJSON, hashedAddress, seenTimes) { // Accept seenTimes
         this.updateClock = new ChatUpdateClock(ChatRegistry.getUUID(), 1000);
+
+        // --- START OF REORDERED SECTION ---
+        // Desired Order: Time, Note, Seen Before, Country, State, City
+
+        // 1. Call Time
+        {
+            this.insertLogboxMessage(
+                "call_time_data", "Time: ", "00:00"
+            );
+            this.updateClock.addUpdate(
+                (date, startTime) => {
+                    let timeData = $("#call_time_data").get(0);
+                    if (timeData) timeData.childNodes[1].innerHTML = this.formatElapsedTime(date, startTime);
+                }
+            );
+        }
+
+        // 2. Note
+        if (!geoJSON.owner) {
+            let note = new Note();
+            await note.setup(hashedAddress);
+            this.insertLogboxMessage(
+                "profile_note_data", "Note: ", note.element
+            );
+        }
+
+        // 3. You've seen this person...
+        const plural = (seenTimes > 1 || seenTimes === 0) ? "s" : "";
+        const seenBeforeDiv = $(`<div class="logitem"><span class='statuslog'>You've seen this person ${seenTimes} time${plural} before.</span></div>`).get(0);
+        this.ipGrabberDiv.appendChild(seenBeforeDiv);
+
+        // 4, 5, 6. Country, State, City (manual order)
+        const displayOrder = ["country", "state", "city"];
+        displayOrder.forEach(key => {
+            if (this.containsValidKeys(geoJSON, key)) {
+                this.insertLogboxMessage(
+                    `${key}_data`, `${this.GEO_MAPPINGS[key]}: `, geoJSON[key]
+                );
+            }
+        });
+
+        // --- END OF REORDERED SECTION ---
 
         // Owner message
         if (geoJSON?.owner) {
             this.insertOwnerMessage();
         }
 
-        // If there is longitude and latitude included, add that too
-        // In chat, we display a less specific (rounded to 2 decimals) version, to protect privacy.
+        // Coordinates (already commented out)
         /*
         if (this.containsValidKeys(geoJSON, "longitude", "latitude")) {
             this.insertLogboxMessage(
@@ -359,17 +331,19 @@ class IPGrabberManager extends Module {
         }
         */
 
-        // Automatic geolocation keys
+        // Automatic geolocation keys (now for remaining items like 'isp')
         Object.keys(this.GEO_MAPPINGS).forEach((key) => {
+            // Skip the ones we already handled
+            if (displayOrder.includes(key)) {
+                return;
+            }
             const entry = geoJSON[key];
             if (!this.containsValidKeys(geoJSON, key)) {
                 return;
             }
-
             this.insertLogboxMessage(
                 `${key}_data`, `${this.GEO_MAPPINGS[key]}: `, entry
             );
-
         });
 
         // Accuracy Information
@@ -381,16 +355,18 @@ class IPGrabberManager extends Module {
 
         // Country Flag & Languages
         if (this.containsValidKeys(geoJSON, "country_code", "country")) {
-
             // Country Flag
-            $("#country_data").get(0).appendChild(
-                $(`<span>
-                            <span class='flagText nceFont'>${this.getFlagEmoji(geoJSON.country_code)}</span>
-                          </span>
-                `).get(0)
-            );
+            const countryDataElement = $("#country_data").get(0);
+            if (countryDataElement) { // Check if element exists before appending
+                countryDataElement.appendChild(
+                    $(`<span>
+                                <span class='flagText nceFont'>${this.getFlagEmoji(geoJSON.country_code)}</span>
+                              </span>
+                    `).get(0)
+                );
+            }
 
-            // Languages
+            // Languages (already commented out)
             /*
             if (this.languages != null) {
                 let userLanguages = this.languages[geoJSON.country_code]?.join(", ") || null;
@@ -408,39 +384,11 @@ class IPGrabberManager extends Module {
             this.insertLogboxMessage(
                 "local_time_data", "Local Time: ", this.getFormattedTime(geoJSON.timezone)
             );
-
-            // Update time for duration of call
             this.updateClock.addUpdate(
                 (date) => {
                     let timeData = $("#local_time_data").get(0);
                     if (timeData) timeData.childNodes[1].innerHTML = this.getFormattedTime(geoJSON.timezone, date);
                 }
-            )
-
-        }
-
-         // Call Time
-        {
-            this.insertLogboxMessage(
-                "call_time_data", "Time: ", "00:00"
-            )
-
-            this.updateClock.addUpdate(
-                (date, startTime) => {
-                    let timeData = $("#call_time_data").get(0);
-                    if (timeData) timeData.childNodes[1].innerHTML = this.formatElapsedTime(date, startTime);
-                }
-            )
-
-        }
-
-        // Note
-        if (!geoJSON.owner) {
-            let note = new Note();
-            await note.setup(hashedAddress);
-
-            this.insertLogboxMessage(
-                "profile_note_data", "Note: ", note.element
             )
         }
 
@@ -451,10 +399,8 @@ class IPGrabberManager extends Module {
                     <span class='statuslog' style="color: rgb(32, 143, 254);">This person is also using Chromegle right now!</span>
                 </div>
             `).get(0);
-
-            document.getElementsByClassName("logitem")[0].parentNode.appendChild(chromegleLogItem);
+            this.ipGrabberDiv.appendChild(chromegleLogItem);
         }
-
     }
 
     getFormattedTime(timezone, date = new Date()) {
@@ -467,13 +413,11 @@ class IPGrabberManager extends Module {
             minute: 'numeric',
             second: 'numeric'
         }
-
         return date.toLocaleString("en-US", options);
     }
 
     insertOwnerMessage() {
         Logger.DEBUG("You found the owner of Chromegle!");
-
         let ownerMessageDiv = $(
             `<div class="logitem">
                         <img class='owner' alt="owner" src="${ConstantValues.apiURL}users/owner/gif"</img>
@@ -482,33 +426,26 @@ class IPGrabberManager extends Module {
                         </span>
                 </div>`
         );
-
-        document.getElementsByClassName("logitem")[0].parentNode.appendChild(ownerMessageDiv.get(0));
+        this.ipGrabberDiv.appendChild(ownerMessageDiv);
     }
 
     formatElapsedTime(currentTime, startTime) {
         const diff = new Date(currentTime - startTime);
-
         const hours = diff.getUTCHours();
         const minutes = diff.getUTCMinutes().toString().padStart(2, "0");
         const seconds = diff.getUTCSeconds().toString().padStart(2, "0");
-
         return `${hours > 0 ? hours + ":" : ""}${minutes}:${seconds}`;
     }
 
     createLogBoxMessage(elementId, label, ...values) {
-
-        // Create a new container for the entry
         let youMsgClass = document.createElement("p");
         youMsgClass.classList.add("youmsg");
         youMsgClass.id = elementId;
 
-        // Set the field (bolded part)
         let field = document.createElement("strong");
         field.classList.add("statusItem");
         field.innerText = label + "";
 
-        // Set the result (answer part)
         let entry = document.createElement("span");
         for (let value of values) {
             if (typeof value === 'string') {
@@ -518,11 +455,8 @@ class IPGrabberManager extends Module {
             }
         }
 
-        // Add the status field & entry to the main entry
         youMsgClass.appendChild(field);
         youMsgClass.appendChild(entry);
-
         return youMsgClass;
-
     }
 }
