@@ -60,7 +60,7 @@ class IPGrabberManager extends Module {
         country: "Country",
         state: "State",
         city: "City",
-        organization: "Provider"
+        isp: "Provider"
     }
 
     ipGrabberDiv = null;
