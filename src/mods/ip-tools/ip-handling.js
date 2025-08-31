@@ -60,6 +60,7 @@ class IPGrabberManager extends Module {
         country: "Country",
         state: "State",
         city: "City",
+        isp: "Provider"
     }
 
     ipGrabberDiv = null;
@@ -275,9 +276,19 @@ class IPGrabberManager extends Module {
         this.updateClock = new ChatUpdateClock(ChatRegistry.getUUID(), 1000);
 
         // --- START OF REORDERED SECTION ---
-        // Desired Order: Time, Note, Seen Before, Country, State, City
+        // Desired Order: IP, Country, State, City, Time, Note, Seen Before
 
-        // 1. Call Time
+        // 1. Country, State, City (manual order) (IP Address is added before this function is called)
+        const displayOrder = ["country", "state", "city"];
+        displayOrder.forEach(key => {
+            if (this.containsValidKeys(geoJSON, key)) {
+                this.insertLogboxMessage(
+                    `${key}_data`, `${this.GEO_MAPPINGS[key]}: `, geoJSON[key]
+                );
+            }
+        });
+
+        // 2. Call Time
         {
             this.insertLogboxMessage(
                 "call_time_data", "Time: ", "00:00"
@@ -290,7 +301,7 @@ class IPGrabberManager extends Module {
             );
         }
 
-        // 2. Note
+        // 3. Note
         if (!geoJSON.owner) {
             let note = new Note();
             await note.setup(hashedAddress);
@@ -299,20 +310,10 @@ class IPGrabberManager extends Module {
             );
         }
 
-        // 3. You've seen this person...
+        // 4. You've seen this person...
         const plural = (seenTimes > 1 || seenTimes === 0) ? "s" : "";
         const seenBeforeDiv = $(`<div class="logitem"><span class='statuslog'>You've seen this person ${seenTimes} time${plural} before.</span></div>`).get(0);
         this.ipGrabberDiv.appendChild(seenBeforeDiv);
-
-        // 4, 5, 6. Country, State, City (manual order)
-        const displayOrder = ["country", "state", "city"];
-        displayOrder.forEach(key => {
-            if (this.containsValidKeys(geoJSON, key)) {
-                this.insertLogboxMessage(
-                    `${key}_data`, `${this.GEO_MAPPINGS[key]}: `, geoJSON[key]
-                );
-            }
-        });
 
         // --- END OF REORDERED SECTION ---
 
