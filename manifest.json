@@ -16,7 +16,12 @@
   },
   "content_scripts": [
     {
-
+      "matches": ["*://*.uhmegle.com/*"],
+      "js": ["src/core/face-bypass.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
       "css": [
         "public/css/main.css",
         "public/css/settings.css"
