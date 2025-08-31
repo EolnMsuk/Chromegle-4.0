@@ -149,11 +149,8 @@ class IPBlockAPI {
             sendErrorLogboxMessage(`Skipped the blocked IP address ${address}`)
                 .appendChild(ButtonFactory.ipUnblockButton(address));
             
-            // Skip using cooldown logic
-            if (isOnSkipCooldown) return shouldSkip; // Already skipping, do nothing.
-            isOnSkipCooldown = true; // Start the cooldown.
-            skipIfPossible();
-            setTimeout(() => { isOnSkipCooldown = false; }, 2000); // End cooldown after 2 seconds.
+            // Use a consistent delay
+            setTimeout(() => skipIfPossible(), 1500);
         }
 
         return shouldSkip;
@@ -208,11 +205,7 @@ class IPBlockAPI {
 
         // Skip if chatting
         if (ChatRegistry.isChatting()) {
-            // Use cooldown logic for manual block-and-skip
-            if (isOnSkipCooldown) return true;
-            isOnSkipCooldown = true;
-            skipIfPossible();
-            setTimeout(() => { isOnSkipCooldown = false; }, 2000);
+            setTimeout(() => skipIfPossible(), 1500); // Use consistent delay
             sendErrorLogboxMessage(`Blocked the IP address ${address} and skipped the current chat.`);
         } else {
             sendErrorLogboxMessage(`Blocked the IP address ${address} in video chat.`);
@@ -411,7 +404,7 @@ class IPBlockingMenu {
         for (const [address, data] of this.#getConfigEntries(config, page)) {
             rows.push(`
                 <tr>
-                    <td>${address || "&nbsp;"}</td>
+                    <td>${address || " "}</td>
                     <td>${data ? this.#timeStampToDate(data.timestamp) : ""}</td>
                     <td>${this.#getIpUnblockButton(address, data)}</td>
                 </tr>
