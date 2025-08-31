@@ -147,8 +147,13 @@ class IPBlockAPI {
         if (shouldSkip) {
             Logger.INFO("Skipped blocked IP address <%s> with chat UUID <%s>", address, ChatRegistry.getUUID());
             sendErrorLogboxMessage(`Skipped the blocked IP address ${address}`)
-                .appendChild(ButtonFactory.ipUnblockButton(address))
+                .appendChild(ButtonFactory.ipUnblockButton(address));
+            
+            // Skip using cooldown logic
+            if (isOnSkipCooldown) return shouldSkip; // Already skipping, do nothing.
+            isOnSkipCooldown = true; // Start the cooldown.
             skipIfPossible();
+            setTimeout(() => { isOnSkipCooldown = false; }, 2000); // End cooldown after 2 seconds.
         }
 
         return shouldSkip;
@@ -203,7 +208,11 @@ class IPBlockAPI {
 
         // Skip if chatting
         if (ChatRegistry.isChatting()) {
+            // Use cooldown logic for manual block-and-skip
+            if (isOnSkipCooldown) return true;
+            isOnSkipCooldown = true;
             skipIfPossible();
+            setTimeout(() => { isOnSkipCooldown = false; }, 2000);
             sendErrorLogboxMessage(`Blocked the IP address ${address} and skipped the current chat.`);
         } else {
             sendErrorLogboxMessage(`Blocked the IP address ${address} in video chat.`);
