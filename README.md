@@ -12,7 +12,7 @@ A Javascript Chrome (and Opera) Extension for Uhmegle, certified for Chrome 137 
 
 # Features
 
-## NEW with v4
+## New with v4
 
 - Country Blocker
 - Face Detection Bypass
@@ -35,7 +35,6 @@ A Javascript Chrome (and Opera) Extension for Uhmegle, certified for Chrome 137 
 - Paste Hotbar
 - Sexual Filter
 - Profanity Filter
-- Blocked Countries
 - Fullscreen tool
 - Screenshot tool
 - Video-Popout tool
