@@ -9,13 +9,10 @@ A Javascript Chrome (and Opera) Extension for Uhmegle, certified for Chrome 137 
 
 # Features
 
-## New with v4
-
-- Country Blocker
-- Face Detection Bypass
-- Bigger Block IP Button
-
 ## Working as intended
+- Country Blocker NEW
+- Face Detection Bypass NEW
+- Bigger Block IP Button NEW
 - Geolocator
 - Calltime Counter
 - Voice Commands eg. omegle skip
