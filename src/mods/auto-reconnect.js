@@ -96,25 +96,7 @@ class ReconnectManager extends Module {
 
     }
 
-    async shouldReconnect() {
-        let autoReconnectEnabled = await config.autoReconnectToggle.retrieveValue();
-        let autoReconnectType = await config.autoReconnectType.retrieveValue();
-
-        // Has to be enabled
-        if (!(autoReconnectEnabled === "true")) {
-            return false;
-        }
-
-        // Cases to reconnect
-        let reconnectCases = [
-            autoReconnectType === this.RECONNECT_TYPES.BOTH,
-            (ChatRegistry.isTextChat() && autoReconnectType === this.RECONNECT_TYPES.TEXT_CHAT),
-            (ChatRegistry.isVideoChat() && autoReconnectType === this.RECONNECT_TYPES.VIDEO_CHAT)
-        ]
-
-        // If ANY are true
-        return reconnectCases.some(i => i);
-
-    }
-
+async shouldReconnect() {
+    return false;
+}
 }
