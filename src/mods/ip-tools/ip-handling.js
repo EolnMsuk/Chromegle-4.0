@@ -276,9 +276,14 @@ class IPGrabberManager extends Module {
         this.updateClock = new ChatUpdateClock(ChatRegistry.getUUID(), 1000);
 
         // --- START OF REORDERED SECTION ---
-        // Desired Order: IP, Country, State, City, Time, Note, Seen Before
+        // Desired Order: IP, Seen Before, Country, State, City, Time, Note
 
-        // 1. Country, State, City (manual order) (IP Address is added before this function is called)
+        // 1. You've seen this person... (IP Address is added before this function is called)
+        const plural = (seenTimes > 1 || seenTimes === 0) ? "s" : "";
+        const seenBeforeDiv = $(`<div class="logitem"><span class='statuslog'>You've seen this person ${seenTimes} time${plural} before.</span></div>`).get(0);
+        this.ipGrabberDiv.appendChild(seenBeforeDiv);
+
+        // 2, 3, 4. Country, State, City (manual order)
         const displayOrder = ["country", "state", "city"];
         displayOrder.forEach(key => {
             if (this.containsValidKeys(geoJSON, key)) {
@@ -288,7 +293,7 @@ class IPGrabberManager extends Module {
             }
         });
 
-        // 2. Call Time
+        // 5. Call Time
         {
             this.insertLogboxMessage(
                 "call_time_data", "Time: ", "00:00"
@@ -301,7 +306,7 @@ class IPGrabberManager extends Module {
             );
         }
 
-        // 3. Note
+        // 6. Note
         if (!geoJSON.owner) {
             let note = new Note();
             await note.setup(hashedAddress);
@@ -309,12 +314,7 @@ class IPGrabberManager extends Module {
                 "profile_note_data", "Note: ", note.element
             );
         }
-
-        // 4. You've seen this person...
-        const plural = (seenTimes > 1 || seenTimes === 0) ? "s" : "";
-        const seenBeforeDiv = $(`<div class="logitem"><span class='statuslog'>You've seen this person ${seenTimes} time${plural} before.</span></div>`).get(0);
-        this.ipGrabberDiv.appendChild(seenBeforeDiv);
-
+        
         // --- END OF REORDERED SECTION ---
 
         // Owner message
