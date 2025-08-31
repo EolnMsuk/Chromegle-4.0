@@ -296,7 +296,7 @@ class IPGrabberManager extends Module {
         // 5. Call Time
         {
             this.insertLogboxMessage(
-                "call_time_data", "Time: ", "00:00"
+                "call_time_data", "Call: ", "00:00"
             );
             this.updateClock.addUpdate(
                 (date, startTime) => {
