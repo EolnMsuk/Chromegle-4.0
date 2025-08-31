@@ -154,7 +154,6 @@ class IPGrabberManager extends Module {
         const seenTimes = previouslyHashed[hashedAddress] || 0;
         this.sendChatSeenEvent(seenTimes, unhashedAddress);
         
-        // Pass seenTimes to createAddressContainer
         this.createAddressContainer(unhashedAddress, hashedAddress, previouslyHashed, showData, seenTimes);
 
         // Update times seen
@@ -179,7 +178,6 @@ class IPGrabberManager extends Module {
         const countryCode = countryNameToCode[countryName] || 'XX';
         fetchJson.country_code = countryCode;
 
-        // Pass seenTimes to onGeolocationRequestCompleted
         await this.onGeolocationRequestCompleted(unhashedAddress, fetchJson, hashedAddress, seenTimes);
     }
 
@@ -225,16 +223,12 @@ class IPGrabberManager extends Module {
 
         const countryBlocked = (await config.countrySkipInfo.retrieveValue() || "").toUpperCase().includes(code);
         if (!countryBlocked) {
-            return;
+            return false;
         }
+        
+        // Use a consistent delay instead of cooldown logic
+        setTimeout(() => skipIfPossible(), 1500);
 
-        // Skip using cooldown logic
-        if (isOnSkipCooldown) return true; // Already skipping, do nothing.
-        isOnSkipCooldown = true; // Start the cooldown.
-        skipIfPossible();
-        setTimeout(() => { isOnSkipCooldown = false; }, 2000); // End cooldown after 2 seconds.
-
-        // Log message
         Logger.INFO("Detected user from blocked country in chat with UUID <%s>, skipped.", ChatRegistry.getUUID());
         sendErrorLogboxMessage(`Detected user from blocked country ${geoJSON["country"]} (${code}), skipped chat.`);
         return true;
@@ -250,13 +244,10 @@ class IPGrabberManager extends Module {
         return true;
     }
 
-    async onGeolocationRequestCompleted(unhashedAddress, geoJSON, hashedAddress, seenTimes) { // Accept seenTimes
+    async onGeolocationRequestCompleted(unhashedAddress, geoJSON, hashedAddress, seenTimes) {
         await this.insertUnhashedAddress(geoJSON?.ip || unhashedAddress, geoJSON?.owner || false);
 
         const countrySkipEnabled = await config.countrySkipToggle.retrieveValue() === "true";
-        if (await this.skipBlockedCountries(countrySkipEnabled, geoJSON)) {
-            return;
-        }
 
         Logger.DEBUG(
             "Received IP Scraping data for chat UUID <%s> from the Chromegle web-server as the following JSON payload: \n\n%s",
@@ -264,8 +255,13 @@ class IPGrabberManager extends Module {
             JSON.stringify(geoJSON, null, 2)
         );
         
-        // Pass seenTimes to displayGeolocationFields
+        // Display geolocation-based fields FIRST
         await this.displayGeolocationFields(geoJSON, hashedAddress, seenTimes);
+
+        // Handle blocked countries LAST
+        if (await this.skipBlockedCountries(countrySkipEnabled, geoJSON)) {
+            return;
+        }
     }
 
     insertLogboxMessage(elementId, label, ...values) {
@@ -278,7 +274,7 @@ class IPGrabberManager extends Module {
         return parseFloat(num).toFixed(2);
     }
 
-    async displayGeolocationFields(geoJSON, hashedAddress, seenTimes) { // Accept seenTimes
+    async displayGeolocationFields(geoJSON, hashedAddress, seenTimes) {
         this.updateClock = new ChatUpdateClock(ChatRegistry.getUUID(), 1000);
 
         // --- START OF REORDERED SECTION ---
