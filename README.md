@@ -1,4 +1,4 @@
-## Chromegle 4.0
+## Chromegle-4.0
 A Javascript Chrome (and Opera) Extension for Uhmegle, certified for Chrome 137 and above. 
 
 # Table of Contents
