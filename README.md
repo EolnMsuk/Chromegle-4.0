@@ -9,7 +9,7 @@ A Javascript Chrome (and Opera) Extension for Uhmegle, certified for Chrome 137 
 
 # Features
 
-## Working as intended
+## Working Features
 - NEW - Country Blocker
 - NEW - Face Detection Bypass
 - NEW - Bigger Block IP Button
