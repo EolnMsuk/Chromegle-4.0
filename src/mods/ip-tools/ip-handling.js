@@ -420,7 +420,7 @@ class IPGrabberManager extends Module {
          // Call Time
         {
             this.insertLogboxMessage(
-                "call_time_data", "Time In Call: ", "00:00"
+                "call_time_data", "Time: ", "00:00"
             )
 
             this.updateClock.addUpdate(
