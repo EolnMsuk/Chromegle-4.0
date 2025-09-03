@@ -96,6 +96,7 @@ let Manifest;
 
     loadModules(
          IPBlockingManager,
+         ThemeManager,
          ChatRegistryManager,
          ChatManager,
          IPGrabberManager,
