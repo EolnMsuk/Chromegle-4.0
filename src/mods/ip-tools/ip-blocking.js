@@ -183,7 +183,6 @@ class IPBlockAPI {
         Logger.INFO("Blocked IP address <%s> in video chat", address);
 
         if (ChatRegistry.isChatting()) {
-            // This is the fix: Directly call the simple skip function.
             performSkip();
             sendErrorLogboxMessage(`Blocked the IP address ${address} and skipped the current chat.`);
         } else {
@@ -196,8 +195,6 @@ class IPBlockAPI {
         return true;
     }
     
-    // --- All other methods in IPBlockAPI remain the same ---
-
     async retrieveBlockConfig() { return await this.#blockList.getList(); }
     async clearBlockConfig(noChange) {
         if (noChange) return false;
@@ -209,7 +206,6 @@ class IPBlockAPI {
     async bulkAddBlockList(blockList) { return await this.#blockList.mergeWith(blockList); }
 }
 
-// The IPBlockingMenu class remains unchanged.
 class IPBlockingMenu {
     ROWS_PER_PAGE = 10;
     settingsModal = null;
@@ -295,45 +291,25 @@ class IPBlockingManager extends Module {
     }
 
     async onButtonClick(event) {
-
-
         if (event?.target?.classList?.contains("ipBlockButton")) {
             await this.onIpBlockButtonClick(event);
-        }
-
-        else if (event?.target?.classList?.contains("ipUnblockButton")) {
+        } else if (event?.target?.classList?.contains("ipUnblockButton")) {
             await this.onIpUnblockButtonClick(event, true);
-        }
-
-        else if (event?.target?.classList?.contains("ipUnblockMenuButton")) {
+        } else if (event?.target?.classList?.contains("ipUnblockMenuButton")) {
             let unblocked = await this.onIpUnblockButtonClick(event, false);
-            await this.onIpUnblockMenuButtonClick(event, unblocked);
+            if(unblocked) await this.onIpUnblockMenuButtonClick(event);
         }
 
         switch (event?.target?.id) {
-            case "importIpList":
-                await this.onIpImportListButtonClick(event);
-                break;
-            case "exportIpList":
-                await this.onIpExportListButtonClick(event);
-                break;
-            case "previousIpPageButton":
-                await this.onPreviousIpPageButtonClick(event);
-                break;
-            case "nextIpPageButton":
-                await this.onNextIpPageButtonClick(event);
-                break;
+            case "importIpList": await this.onIpImportListButtonClick(event); break;
+            case "exportIpList": await this.onIpExportListButtonClick(event); break;
+            case "previousIpPageButton": await this.onPreviousIpPageButtonClick(event); break;
+            case "nextIpPageButton": await this.onNextIpPageButtonClick(event); break;
         }
-
     }
 
-    async onPreviousIpPageButtonClick(_) {
-        this.#menu.previousPage();
-    }
-
-    async onNextIpPageButtonClick(_) {
-        this.#menu.nextPage();
-    }
+    async onPreviousIpPageButtonClick(_) { this.#menu.previousPage(); }
+    async onNextIpPageButtonClick(_) { this.#menu.nextPage(); }
 
     async onIpImportListButtonClick(_) {
         let json = prompt("Paste the JSON data to import:");
@@ -376,10 +352,8 @@ class IPBlockingManager extends Module {
         return unblockValue ? await this.#api.unblockAddress(unblockValue, logInChat) : false;
     }
 
-    async onIpUnblockMenuButtonClick(event, unblocked) {
-        if (unblocked) {
-            this.#menu.genTable(1);
-        }
+    async onIpUnblockMenuButtonClick(event) {
+        this.#menu.genTable(1);
     }
 }
 
