@@ -96,33 +96,10 @@ let Manifest;
 
     loadModules(
          IPBlockingManager,
-         ThemeManager,
-        // TopicSyncManager,
          ChatRegistryManager,
-        // PasteMenu,
          ChatManager,
-        // FilterManager,
-        // ConfirmManager,
-         AutoMessageManager,
-         ReconnectManager,
          IPGrabberManager,
-        // UnmoderatedChatManager,
-         SpeechEngineManager,
-        // VideoWrapperManager,
-        // VideoBlockerManager,
-        // VideoScreenshotManager,
-        // FullScreenVideoManager,
-        // SplashImageHandler,
-        // ClearInterestsManager,
-         SettingsManager,
-         TimerSkipManager,
-         RepeatSkipManager,
-         MessageSkipManager,
-         AgeSkipManager,
-        // UserCountManager,
-        // BroadcastManager,
-        // VideoPopoutManager,
-        // LinkEmbedManager
+         SettingsManager
     );
 
 })();
