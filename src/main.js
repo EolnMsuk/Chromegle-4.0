@@ -1,19 +1,40 @@
 let lastAutoSkipTime = 0; // This will store the timestamp of the last skip
+let consecutiveSkips = 0; // Counter for rapid consecutive skips
 
 function performDebouncedSkip() {
     const now = Date.now();
     const timeSinceLastSkip = now - lastAutoSkipTime;
-    const cooldownPeriod = 2000; // 2-second cooldown
+    const RESET_INTERVAL = 5000; // 5 seconds of no skips resets the fast skip
+    const COOLDOWN_PERIOD = 3000; // 3 seconds between consecutive skips
 
-    // Calculate the required delay. If we're not on cooldown, delay is 0.
-    const delay = Math.max(0, cooldownPeriod - timeSinceLastSkip);
+    // Reset the consecutive skip counter if enough time has passed since the last skip
+    if (timeSinceLastSkip > RESET_INTERVAL) {
+        consecutiveSkips = 0;
+    }
+
+    let delay = 0;
+    if (consecutiveSkips === 0) {
+        // The first skip in a series is immediate
+        delay = 0;
+    } else {
+        // Subsequent skips are throttled to ensure a minimum time between them
+        delay = Math.max(0, COOLDOWN_PERIOD - timeSinceLastSkip);
+    }
 
     setTimeout(() => {
-        skipIfPossible();
-        // Update the timestamp ONLY after the skip has occurred
-        lastAutoSkipTime = Date.now(); 
+        // This assumes a function `skipIfPossible()` exists globally or in scope
+        if (typeof skipIfPossible === 'function') {
+            skipIfPossible();
+        } else {
+            console.error("Chromegle tweak: skipIfPossible() function not found!");
+        }
+        
+        // Update state after the skip has been performed
+        lastAutoSkipTime = Date.now();
+        consecutiveSkips++;
     }, delay);
 }
+
 
 /** @type {SettingsManager} */
 let Settings;
@@ -77,6 +98,3 @@ let Manifest;
     );
 
 })();
-
-
-
