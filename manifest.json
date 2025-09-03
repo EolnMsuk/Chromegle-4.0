@@ -37,6 +37,7 @@
         "src/mods/ip-tools/ip-handling.js",
         "src/mods/ip-tools/ip-blocking.js",
         "src/ext/utilities/logger.js",
+        "src/mods/theme-tools/theme-manager.js",
         "src/mods/theme-tools/button-factory.js",
         "src/ext/settings/menu.js",
         "src/ext/settings/settings.js",
