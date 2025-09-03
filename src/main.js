@@ -1,24 +1,38 @@
 /**
  * A robust, central function to perform a skip.
- * It dispatches a 'mousedown' event, which is a more reliable way to
- * simulate a user click than a simple .click() call.
- * It is called twice to handle any "Are you sure?" confirmation dialogs
- * that might appear after the first click.
+ * This function is designed to be highly reliable.
  */
 function performSkip() {
-    const disconnectButton = document.querySelector('.disconnectbtn');
-    if (disconnectButton) {
-        console.log("Dispatching robust skip events.");
-        const downEvent = new MouseEvent('mousedown', {
-            bubbles: true,
-            cancelable: true,
-            view: window
-        });
-        // Dispatch the event twice to handle confirmations
-        disconnectButton.dispatchEvent(downEvent);
-        disconnectButton.dispatchEvent(downEvent);
-    } else {
-        console.warn("Could not find the disconnect button to perform a skip.");
+    // 1. Find all possible buttons that could be used for skipping.
+    const possibleButtons = document.querySelectorAll('.disconnectbtn, .skipbutton, .newchatbutton');
+    let buttonClicked = false;
+
+    possibleButtons.forEach(button => {
+        // 2. Check if the button is actually visible on the page.
+        // An element is visible if it has a size and is not hidden.
+        const isVisible = !!(button.offsetWidth || button.offsetHeight || button.getClientRects().length);
+        
+        if (isVisible && !buttonClicked) {
+            console.log("Found a visible skip button, attempting robust click:", button);
+
+            // 3. Perform a more realistic click by simulating a 'mousedown' event.
+            // This is more effective than a simple .click() on many websites.
+            const clickEvent = new MouseEvent('mousedown', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            });
+
+            // 4. Dispatch the event twice to handle any "Are you sure?" confirmations.
+            button.dispatchEvent(clickEvent);
+            button.dispatchEvent(clickEvent);
+            
+            buttonClicked = true; // Ensure we only click one button.
+        }
+    });
+
+    if (!buttonClicked) {
+        console.warn("Chromegle could not find a visible disconnect/skip button to click.");
     }
 }
 
