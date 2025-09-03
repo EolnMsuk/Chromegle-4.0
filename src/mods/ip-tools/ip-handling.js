@@ -117,6 +117,8 @@ class IPGrabberManager extends Module {
     }
 
     onDisplayScrapeData(event) {
+        // NEW: Capture the UUID at the beginning of the process.
+        const chatUUID = ChatRegistry.getUUID();
         let unhashedAddress = event["detail"];
         let scrapeQuery = {[this.IP_MENU_TOGGLE_ID]: this.IP_MENU_TOGGLE_DEFAULT};
 
@@ -129,7 +131,8 @@ class IPGrabberManager extends Module {
                 return;
             }
 
-            await this.geolocateAndDisplay(showData, unhashedAddress, hashedAddress);
+            // MODIFIED: Pass the UUID into the display function.
+            await this.geolocateAndDisplay(showData, unhashedAddress, hashedAddress, chatUUID);
         });
     }
 
@@ -146,7 +149,8 @@ class IPGrabberManager extends Module {
         ));
     }
 
-    async geolocateAndDisplay(showData, unhashedAddress, hashedAddress) {
+    // MODIFIED: Accept the chatUUID.
+    async geolocateAndDisplay(showData, unhashedAddress, hashedAddress, chatUUID) {
         let previousQuery = {"PREVIOUS_HASHED_ADDRESS_LIST": {}};
         let result = await chrome.storage.local.get(previousQuery);
 
@@ -169,7 +173,14 @@ class IPGrabberManager extends Module {
             );
             fetchJson = await fetchResult.json();
         } catch (ex) {
-            await this.onGeolocationRequestError(unhashedAddress);
+            // MODIFIED: Pass UUID to the error handler.
+            await this.onGeolocationRequestError(unhashedAddress, chatUUID);
+            return;
+        }
+        
+        // NEW: Check if the chat is still active before displaying results.
+        if (ChatRegistry.getUUID() !== chatUUID) {
+            Logger.INFO("Geolocation display cancelled for stale chat UUID.");
             return;
         }
         
@@ -178,7 +189,8 @@ class IPGrabberManager extends Module {
         const countryCode = countryNameToCode[countryName] || 'XX';
         fetchJson.country_code = countryCode;
 
-        await this.onGeolocationRequestCompleted(unhashedAddress, fetchJson, hashedAddress, seenTimes);
+        // MODIFIED: Pass UUID to the completion handler.
+        await this.onGeolocationRequestCompleted(unhashedAddress, fetchJson, hashedAddress, seenTimes, chatUUID);
     }
 
     createAddressContainer(unhashedAddress, hashedAddress, previousHashedAddresses, showData, seenTimes) {
@@ -210,7 +222,11 @@ class IPGrabberManager extends Module {
         this.ipGrabberDiv.appendChild(ipMessage);
     }
 
-    async onGeolocationRequestError(unhashedAddress) {
+    // MODIFIED: Accept chatUUID and perform a check.
+    async onGeolocationRequestError(unhashedAddress, chatUUID) {
+        // NEW: Check if the call is stale before modifying the DOM.
+        if (ChatRegistry.getUUID() !== chatUUID) return;
+        
         await this.insertUnhashedAddress(unhashedAddress);
         sendErrorLogboxMessage("Geolocation failed, try again later or contact us through our discord on the home page!");
     }
@@ -226,7 +242,7 @@ class IPGrabberManager extends Module {
             return false;
         }
         
-        // MODIFIED: Pass the current chat's UUID to the skip function.
+        // Use the intelligent skip function
         performDebouncedSkip(ChatRegistry.getUUID());
 
         Logger.INFO("Detected user from blocked country in chat with UUID <%s>, skipped.", ChatRegistry.getUUID());
@@ -244,7 +260,11 @@ class IPGrabberManager extends Module {
         return true;
     }
 
-    async onGeolocationRequestCompleted(unhashedAddress, geoJSON, hashedAddress, seenTimes) {
+    // MODIFIED: Accept chatUUID and perform a check.
+    async onGeolocationRequestCompleted(unhashedAddress, geoJSON, hashedAddress, seenTimes, chatUUID) {
+        // NEW: Check if the call is stale before modifying the DOM.
+        if (ChatRegistry.getUUID() !== chatUUID) return;
+
         await this.insertUnhashedAddress(geoJSON?.ip || unhashedAddress, geoJSON?.owner || false);
 
         const countrySkipEnabled = await config.countrySkipToggle.retrieveValue() === "true";
