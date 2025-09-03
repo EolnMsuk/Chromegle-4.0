@@ -77,10 +77,10 @@ class IPGrabberManager extends Module {
 
         if (enabled) {
             this.ipToggleButton.html(this.DISABLE_TAG);
-            this.ipGrabberDiv.style.display = "";
+            if (this.ipGrabberDiv) this.ipGrabberDiv.style.display = "";
         } else {
             this.ipToggleButton.html(this.ENABLE_TAG);
-            this.ipGrabberDiv.style.display = "none";
+            if (this.ipGrabberDiv) this.ipGrabberDiv.style.display = "none";
         }
 
         showQuery[this.IP_MENU_TOGGLE_ID] = `${enabled}`;
@@ -105,6 +105,7 @@ class IPGrabberManager extends Module {
         (document.head || document.documentElement).appendChild(script);
     }
 
+
     loadLanguageList() {
         $.getJSON(getResourceURL("public/languages.json"), (json) => this.languages = json);
     }
@@ -112,64 +113,30 @@ class IPGrabberManager extends Module {
     getFlagEmoji(countryCode) {
         return String.fromCodePoint(...[...countryCode.toUpperCase()].map(x => 0x1f1a5 + x.charCodeAt(undefined)));
     }
-    
-    /**
-     * --- NEW FUNCTION ---
-     * This function is responsible for clearing all previous chat information from the UI.
-     * It's called at the beginning of every new chat to prevent "doubling up" of info.
-     */
-    clearPreviousChatInfo() {
-        const innerLogBox = document.getElementsByClassName("chatWindow")[0]?.parentNode;
-        if (!innerLogBox) return;
 
-        // Remove the main container for our info if it exists
-        if (this.ipGrabberDiv) {
-            this.ipGrabberDiv.remove();
-            this.ipGrabberDiv = null;
-        }
-
-        // Also remove any other generic log items that might be left over
-        const existingLogItems = innerLogBox.getElementsByClassName("logitem");
-        while (existingLogItems.length > 0) {
-            existingLogItems[0].remove();
-        }
-    }
-
-
-    onDisplayScrapeData(event) {
-        // --- MODIFIED ---
-        // Clear all old UI elements from the previous chat immediately.
-        // This fixes the "doubling up" of location info.
-        this.clearPreviousChatInfo();
-        
+    async onDisplayScrapeData(event) {
         let unhashedAddress = event["detail"];
-        if (!unhashedAddress) return;
-        
         let scrapeQuery = {[this.IP_MENU_TOGGLE_ID]: this.IP_MENU_TOGGLE_DEFAULT};
 
+        // First, check if the IP itself is blocked.
+        // The checkAndSkipAddress function will handle the skip if needed.
+        if (await IPBlockingManager.API.checkAndSkipAddress(unhashedAddress)) {
+            return; // Stop if the IP was blocked and skipped.
+        }
+
+        // If the IP wasn't blocked, proceed to get location info.
         chrome.storage.sync.get(scrapeQuery, async (result) => {
             let showData = result[this.IP_MENU_TOGGLE_ID] === "true";
             let hashedAddress = await sha1(unhashedAddress);
 
             Logger.DEBUG("Scraped IP Address from video chat | Hashed: <%s> Raw: <%s>", hashedAddress, unhashedAddress);
-            
-            // Check for blocked IP
-            if (await IPBlockingManager.API.isAddressBlocked(unhashedAddress)) {
-                Logger.INFO("Blocked IP address detected. Triggering intelligent skip.");
-                IPBlockingManager.triggerIntelligentSkip();
-                sendErrorLogboxMessage(`Skipped blocked IP address ${unhashedAddress}`);
-                return; // Stop processing this user
-            }
-
-            // If not IP-blocked, proceed to get location data
             await this.geolocateAndDisplay(showData, unhashedAddress, hashedAddress);
         });
     }
 
     sendChatSeenEvent(seenTimes, unhashedAddress) {
         document.dispatchEvent(new CustomEvent(
-            "chatSeenTimes",
-            {
+            "chatSeenTimes", {
                 detail: {
                     "uuid": ChatRegistry.getUUID(),
                     "seenTimes": seenTimes,
@@ -187,7 +154,7 @@ class IPGrabberManager extends Module {
         const seenTimes = previouslyHashed[hashedAddress] || 0;
         this.sendChatSeenEvent(seenTimes, unhashedAddress);
         
-        this.createAddressContainer(showData);
+        this.createAddressContainer(unhashedAddress, hashedAddress, previouslyHashed, showData, seenTimes);
 
         previouslyHashed[hashedAddress] = seenTimes + 1;
         await chrome.storage.local.set({"PREVIOUS_HASHED_ADDRESS_LIST": previouslyHashed});
@@ -211,8 +178,14 @@ class IPGrabberManager extends Module {
         await this.onGeolocationRequestCompleted(unhashedAddress, fetchJson, hashedAddress, seenTimes);
     }
 
-    createAddressContainer(showData) {
+    createAddressContainer(unhashedAddress, hashedAddress, previousHashedAddresses, showData, seenTimes) {
         const innerLogBox = document.getElementsByClassName("chatWindow")[0].parentNode;
+
+        // Clear any old info first
+        const existingLogItems = innerLogBox.getElementsByClassName("logitem");
+        while (existingLogItems.length > 0) {
+            existingLogItems[0].remove();
+        }
 
         this.ipGrabberDiv = document.createElement("div");
         this.ipGrabberDiv.style.display = showData ? "" : "none";
@@ -240,47 +213,26 @@ class IPGrabberManager extends Module {
         sendErrorLogboxMessage("Geolocation failed, try again later or contact us through our discord on the home page!");
     }
 
-    async skipBlockedCountries(countrySkipEnabled, geoJSON) {
-        const code = geoJSON["country_code"] || geoJSON["country_code3"];
-        if (!countrySkipEnabled || !code) {
-            return false;
-        }
-
-        const countryBlocked = (await config.countrySkipInfo.retrieveValue() || "").toUpperCase().includes(code);
-        if (!countryBlocked) {
-            return false;
-        }
-        
-        IPBlockingManager.triggerIntelligentSkip();
-        Logger.INFO("Detected user from blocked country in chat with UUID <%s>, skipped.", ChatRegistry.getUUID());
-        sendErrorLogboxMessage(`Detected user from blocked country ${geoJSON["country"]} (${code}), skipped chat.`);
-        return true;
-    }
-
-    containsValidKeys(obj, ...keys) {
-        let keyList = Object.keys(obj);
-        for (let key of keys) {
-            if (!keyList.includes(key) || !obj[key] || obj[key] === '') {
-                return false;
-            }
-        }
-        return true;
-    }
-
     async onGeolocationRequestCompleted(unhashedAddress, geoJSON, hashedAddress, seenTimes) {
         const countrySkipEnabled = await config.countrySkipToggle.retrieveValue() === "true";
-        
-        // --- MODIFIED ---
-        // First, check for blocked countries. If blocked, skip and stop processing.
-        if (await this.skipBlockedCountries(countrySkipEnabled, geoJSON)) {
-            return;
+        const code = geoJSON["country_code"] || geoJSON["country_code3"];
+
+        // This is the fix: Check for the blocked country here.
+        if (countrySkipEnabled && code) {
+            const countryBlocked = (await config.countrySkipInfo.retrieveValue() || "").toUpperCase().includes(code);
+            if (countryBlocked) {
+                Logger.INFO("Detected user from blocked country (%s), skipping.", code);
+                sendErrorLogboxMessage(`Detected user from blocked country ${geoJSON["country"]} (${code}), skipped chat.`);
+                performSkip();
+                return; // Stop processing and displaying info.
+            }
         }
-        
-        // If not country-blocked, display all the info.
+
+        // If the country was NOT blocked, proceed to display all the info.
         await this.insertUnhashedAddress(geoJSON?.ip || unhashedAddress, geoJSON?.owner || false);
 
         Logger.DEBUG(
-            "Received IP Scraping data for chat UUID <%s> from the Chromegle web-server as the following JSON payload: \n\n%s",
+            "Received IP Scraping data for chat UUID <%s>: \n\n%s",
             ChatRegistry.getUUID(),
             JSON.stringify(geoJSON, null, 2)
         );
@@ -289,7 +241,6 @@ class IPGrabberManager extends Module {
     }
 
     insertLogboxMessage(elementId, label, ...values) {
-        if (!this.ipGrabberDiv) return; // Prevent errors if div doesn't exist
         this.ipGrabberDiv.appendChild(
             this.createLogBoxMessage(elementId, label, ...values)
         )
@@ -312,7 +263,7 @@ class IPGrabberManager extends Module {
         });
 
         {
-            this.insertLogboxMessage("call_time_data", "Call: ", "00:00");
+            this.insertLogboxMessage( "call_time_data", "Call: ", "00:00" );
             this.updateClock.addUpdate(
                 (date, startTime) => {
                     let timeData = $("#call_time_data").get(0);
@@ -324,12 +275,12 @@ class IPGrabberManager extends Module {
         if (!geoJSON.owner) {
             let note = new Note();
             await note.setup(hashedAddress);
-            this.insertLogboxMessage("profile_note_data", "Note: ", note.element);
+            this.insertLogboxMessage( "profile_note_data", "Note: ", note.element );
         }
         
         const plural = (seenTimes > 1 || seenTimes === 0) ? "s" : "";
         const seenBeforeDiv = $(`<div class="logitem"><span class='statuslog'>You've seen this person ${seenTimes} time${plural} before.</span></div>`).get(0);
-        if (this.ipGrabberDiv) this.ipGrabberDiv.appendChild(seenBeforeDiv);
+        this.ipGrabberDiv.appendChild(seenBeforeDiv);
 
         if (geoJSON?.owner) {
             this.insertOwnerMessage();
@@ -338,7 +289,7 @@ class IPGrabberManager extends Module {
         Object.keys(this.GEO_MAPPINGS).forEach((key) => {
             if (displayOrder.includes(key)) return;
             if (!this.containsValidKeys(geoJSON, key)) return;
-            this.insertLogboxMessage(`${key}_data`, `${this.GEO_MAPPINGS[key]}: `, geoJSON[key]);
+            this.insertLogboxMessage( `${key}_data`, `${this.GEO_MAPPINGS[key]}: `, geoJSON[key] );
         });
 
         if (this.containsValidKeys(geoJSON, "accuracy")) {
@@ -366,7 +317,7 @@ class IPGrabberManager extends Module {
 
         if (this.containsValidKeys("chromegler") && geoJSON.chromegler) {
             let chromegleLogItem = $(`<div class="logitem"><span class='statuslog' style="color: rgb(32, 143, 254);">This person is also using Chromegle right now!</span></div>`).get(0);
-            if(this.ipGrabberDiv) this.ipGrabberDiv.appendChild(chromegleLogItem);
+            this.ipGrabberDiv.appendChild(chromegleLogItem);
         }
     }
 
@@ -378,7 +329,7 @@ class IPGrabberManager extends Module {
     insertOwnerMessage() {
         Logger.DEBUG("You found the owner of Chromegle!");
         let ownerMessageDiv = $(`<div class="logitem"><img class='owner' alt="owner" src="${ConstantValues.apiURL}users/owner/gif"</img><span class='statuslog' style="color: rgb(235 171 21);">You found the developer of Chromegle! It's lovely to meet you!</span></div>`);
-        if(this.ipGrabberDiv) this.ipGrabberDiv.appendChild(ownerMessageDiv.get(0));
+        this.ipGrabberDiv.appendChild(ownerMessageDiv.get(0));
     }
 
     formatElapsedTime(currentTime, startTime) {
