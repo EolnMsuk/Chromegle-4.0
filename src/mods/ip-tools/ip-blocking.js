@@ -149,8 +149,8 @@ class IPBlockAPI {
             sendErrorLogboxMessage(`Skipped the blocked IP address ${address}`)
                 .appendChild(ButtonFactory.ipUnblockButton(address));
             
-            // Use the intelligent skip function
-            performDebouncedSkip();
+            // MODIFIED: Pass the current chat's UUID to the skip function.
+            performDebouncedSkip(ChatRegistry.getUUID());
         }
 
         return shouldSkip;
@@ -206,7 +206,7 @@ class IPBlockAPI {
         // Skip if chatting
         if (ChatRegistry.isChatting()) {
             // Use the intelligent skip function
-            performDebouncedSkip();
+            performDebouncedSkip(ChatRegistry.getUUID());
             sendErrorLogboxMessage(`Blocked the IP address ${address} and skipped the current chat.`);
         } else {
             sendErrorLogboxMessage(`Blocked the IP address ${address} in video chat.`);
