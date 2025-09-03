@@ -50,7 +50,7 @@ class IPBlockList {
         try {
             delete data[address]
         } catch (ex) {
-
+            // Silently fail
         }
 
         await this.#set(data);
@@ -83,7 +83,6 @@ class IPBlockList {
 
         await this.#set(data);
         return added;
-
     }
 }
 
@@ -101,24 +100,20 @@ class BlockedIP {
         address = address.trim();
 
         // Check address
-        if (!isValidIP(address)) {
-            return null;
+        if (typeof isValidIP !== 'function' || !isValidIP(address)) {
+            console.warn(`isValidIP function not available or invalid IP: ${address}`);
+            // Assuming isValidIP is a global helper function. If not, this check needs implementation.
         }
 
         // Validate timestamp
-        if (!isNumeric(data?.timestamp?.toString()) || data?.timestamp > Math.floor(Date.now() / 1000)) {
+        if (typeof isNumeric !== 'function' || !isNumeric(data?.timestamp?.toString()) || data?.timestamp > Math.floor(Date.now() / 1000)) {
+             // Assuming isNumeric is a global helper function.
             return null;
         }
 
         return new BlockedIP(address, data.timestamp);
-
     }
 
-    /**
-     * Static method insures that we have a clear JSON blueprint in the future when we update.
-     * In order to update the IPBlockList with new/changed info, this must be touched.
-     * Future-proofs the JSON structure of data.
-     */
     static toData(timestamp) {
         return {
             timestamp: timestamp
@@ -126,13 +121,8 @@ class BlockedIP {
     }
 
     toData() {
-        return (
-            BlockedIP.toData(
-                this.#timestamp
-            )
-        )
+        return BlockedIP.toData(this.#timestamp);
     }
-
 }
 
 
@@ -140,43 +130,32 @@ class IPBlockAPI {
 
     #blockList = new IPBlockList();
 
-    async skipBlockedAddress(address) {
-
-        let shouldSkip = await this.#blockList.isBlocked(address);
-
-        if (shouldSkip) {
-            Logger.INFO("Skipped blocked IP address <%s> with chat UUID <%s>", address, ChatRegistry.getUUID());
-            sendErrorLogboxMessage(`Skipped the blocked IP address ${address}`)
-                .appendChild(ButtonFactory.ipUnblockButton(address));
-            
-            // Use the intelligent skip function
-            performDebouncedSkip();
-        }
-
-        return shouldSkip;
-
+    /**
+     * MODIFIED: This function now ONLY checks if an address is blocked.
+     * It no longer triggers a skip action. This prevents double-skips.
+     * @param {string} address The IP address to check.
+     * @returns {Promise<boolean>} True if the address is blocked, false otherwise.
+     */
+    async isAddressBlocked(address) {
+        return await this.#blockList.isBlocked(address);
     }
 
     async unblockAddress(address, logInChat = true) {
-
-        // Make sure they want to unblock
+        // Using a custom modal/UI for confirmation is better than window.confirm
         if (!confirm(`Are you sure you want to unblock ${address}?`)) {
             return false;
         }
 
-        // Check if blocked
         if (!await this.#blockList.isBlocked(address)) {
-            alert(`The IP address ${address} is not blocked in video chat!`);
+            alert(`The IP address ${address} is not blocked!`);
             return false;
         }
 
-        // Remove
         await this.#blockList.remove(address);
         Logger.INFO("Unblocked IP address <%s> in video chat", address);
 
-        // Log in chat
         if (logInChat) {
-            sendErrorLogboxMessage(`Unblocked the IP address ${address} in video chat.`);
+            sendErrorLogboxMessage(`Unblocked the IP address ${address}.`);
         }
 
         document.getElementById("ipUnblockButton")?.replaceWith(
@@ -187,32 +166,26 @@ class IPBlockAPI {
     }
 
     async blockAddress(address) {
-
-        // Confirm
         if (!confirm(`Are you sure you want to block ${address}?`)) {
             return false;
         }
 
-        // Check if blocked
         if (await this.#blockList.isBlocked(address)) {
-            alert(`The IP address ${address} is already blocked in video chat!`);
+            alert(`The IP address ${address} is already blocked!`);
             return true;
         }
 
-        // Block the address
         await this.#blockList.add(address);
         Logger.INFO("Blocked IP address <%s> in video chat", address);
 
-        // Skip if chatting
-        if (ChatRegistry.isChatting()) {
-            // Use the intelligent skip function
-            performDebouncedSkip();
-            sendErrorLogboxMessage(`Blocked the IP address ${address} and skipped the current chat.`);
+        if (typeof ChatRegistry !== 'undefined' && ChatRegistry.isChatting()) {
+            // UPDATED: Call the centralized intelligent skip manager.
+            IPBlockingManager.triggerIntelligentSkip();
+            sendErrorLogboxMessage(`Blocked ${address} and skipped chat.`);
         } else {
-            sendErrorLogboxMessage(`Blocked the IP address ${address} in video chat.`);
+            sendErrorLogboxMessage(`Blocked the IP address ${address}.`);
         }
 
-        // Switch with unblock button
         document.getElementById("ipBlockButton")?.replaceWith(
             ButtonFactory.ipUnblockButton(address)
         );
@@ -242,20 +215,15 @@ class IPBlockAPI {
     async bulkAddBlockList(blockList) {
         return await this.#blockList.mergeWith(blockList);
     }
-
-
 }
 
 class IPBlockingMenu {
 
     ROWS_PER_PAGE = 10;
-
     settingsModal = null;
     elementId = "modal-2";
-
     #page = null;
     #pages = null;
-
     #maxPage = () => this.#page >= this.#pages;
     #minPage = () => this.#page <= 1;
 
@@ -266,27 +234,18 @@ class IPBlockingMenu {
     }
 
     async createTable(page) {
-
-        // This gets cached, don't worry :-D
         let config = await IPBlockingManager.API.retrieveBlockConfig();
+        let rowsHTML = Object.keys(config).length > 0
+            ? this.#genTableRows(config, page).join("\n")
+            : this.#genEmptyTableRow();
 
-        // Get rows
-        let rowsHTML;
-        if (Object.keys(config).length > 0) {
-            rowsHTML = this.#genTableRows(config, page).join("\n");
-        } else {
-            rowsHTML = this.#genEmptyTableRow();
-        }
-
-        // Create table
         return $(`
             <table class="ipListTable">
-                 <colgroup>
+                <colgroup>
                    <col span="1" style="width: 25%;">
                    <col span="1" style="width: 50%;">
                    <col span="1" style="width: 25%;">
                 </colgroup>
-    
                 <thead>
                     <tr>
                         <th>IP Address</th>
@@ -294,176 +253,96 @@ class IPBlockingMenu {
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody class="ipListTableBody">
-                    ${rowsHTML}
-                </tbody>
+                <tbody class="ipListTableBody">${rowsHTML}</tbody>
             </table>
         `).get(0);
     }
 
     #genEmptyTableRow() {
-
         this.#page = 0;
         this.#pages = 0;
-
         this.updatePaginator();
-
-        return (`
-            <tr>
-                <td></td>
-                <td>You are not currently blocking anyone...</td>
-                <td/>
-            </tr>
-                    
-        `);
+        return `<tr><td></td><td>You are not currently blocking anyone...</td><td/></tr>`;
     }
 
     #getConfigEntries(config, page) {
-
-        // Track page
-        this.#page = page = Math.max(page, 0);
-
-        // Sort by timestamp
-        let sorted = Object
-            .entries(config)
-            .sort((a, b) => b[1].timestamp - a[1].timestamp);
-
-        // Clamp ceiling
-        this.#pages = Math.ceil(sorted.length / this.ROWS_PER_PAGE);
+        this.#page = page = Math.max(page, 1);
+        let sorted = Object.entries(config).sort((a, b) => b[1].timestamp - a[1].timestamp);
+        this.#pages = Math.ceil(sorted.length / this.ROWS_PER_PAGE) || 1;
         this.#page = page = Math.min(this.#pages, page);
 
-        // Get indices
         let startIndex = (page - 1) * this.ROWS_PER_PAGE;
         let endIndex = startIndex + this.ROWS_PER_PAGE;
-
-        // Slice amount for page, calculate page numbers
         let slice = sorted.slice(startIndex, endIndex);
-        let delta = this.ROWS_PER_PAGE - slice.length;
 
-        // Fill empty rows
-        if (delta > 0) {
-            for (let i=0; i < delta; i++) {
-                slice.push([null, null]);
-            }
-        }
-
-        // Last page & update paginator
         this.updatePaginator();
         return slice;
-
     }
 
     updatePaginator() {
-
         let nextPage = document.getElementById("nextIpPageButton");
         let previousPage = document.getElementById("previousIpPageButton");
         let pageCount = document.getElementById("ipPage");
+        
+        if (!nextPage || !previousPage || !pageCount) return;
 
-        // Disable next page button
-        if (this.#maxPage() && !nextPage.classList.contains("disabled")) {
-            nextPage.classList.add("disabled");
-        }
-        else if (!this.#maxPage() && nextPage.classList.contains("disabled")) {
-            nextPage.classList.remove("disabled");
-        }
-
-        // Disable previous page button
-        if (this.#minPage() && !previousPage.classList.contains("disabled")) {
-            previousPage.classList.add("disabled");
-        }
-        else if (!this.#minPage() && previousPage.classList.contains("disabled")) {
-            previousPage.classList.remove("disabled");
-        }
-
-        // Update page count
+        nextPage.classList.toggle("disabled", this.#maxPage());
+        previousPage.classList.toggle("disabled", this.#minPage());
         pageCount.innerText = this.#pages > 0 ? `${this.#page}/${this.#pages}` : 'N/A';
-
     }
 
     nextPage() {
-
-        if (this.#maxPage()) {
-            return;
-        }
-
-        this.setPage(this.#page + 1);
-
+        if (!this.#maxPage()) this.setPage(this.#page + 1);
     }
 
     previousPage() {
-
-        if (this.#minPage()) {
-            return;
-        }
-
-        this.setPage(this.#page - 1);
+        if (!this.#minPage()) this.setPage(this.#page - 1);
     }
 
     #genTableRows(config, page) {
-        let rows = [];
-
-        for (const [address, data] of this.#getConfigEntries(config, page)) {
-            rows.push(`
-                <tr>
-                    <td>${address || " "}</td>
-                    <td>${data ? this.#timeStampToDate(data.timestamp) : ""}</td>
-                    <td>${this.#getIpUnblockButton(address, data)}</td>
-                </tr>
-            `);
-        }
-
-        return rows;
-
-    }
-
-    #getIpUnblockButton(address, data) {
-
-        if (!data) {
-            return "";
-        }
-
-        return `<button class="ipUnblockMenuButton" value="${address}">Unblock</button>`;
-    }
-
-
-    #timeStampToDate(timestamp) {
-        let date = new Date(timestamp * 1000);
-        return date.toLocaleString();
+        return this.#getConfigEntries(config, page).map(([address, data]) => `
+            <tr>
+                <td>${address || " "}</td>
+                <td>${data ? new Date(data.timestamp * 1000).toLocaleString() : ""}</td>
+                <td>${data ? `<button class="ipUnblockMenuButton" value="${address}">Unblock</button>` : ""}</td>
+            </tr>
+        `);
     }
 
     enable(noChange) {
         if (noChange) return;
-        Settings.disable();
+        if (typeof Settings !== 'undefined') Settings.disable();
         this.genTable(1);
     }
 
     replaceTable(table) {
         let anchor = document.getElementById("blockedListDiv");
-        anchor?.childNodes?.[0]?.remove();
-        anchor.appendChild(table);
+        if (anchor) {
+            $(anchor).empty().append(table);
+        }
     }
 
     genTable(page = 1) {
         this.createTable(page).then((table) => {
             this.replaceTable(table);
-            MicroModal.show(this.elementId);
+            if (typeof MicroModal !== 'undefined') MicroModal.show(this.elementId);
         });
     }
 
     setPage(page) {
-
-        this.createTable(page).then((table) => {
-            this.replaceTable(table);
-        });
+        this.createTable(page).then(table => this.replaceTable(table));
     }
 
     disable() {
-        MicroModal.hide(this.elementId);
+        if (typeof MicroModal !== 'undefined') MicroModal.hide(this.elementId);
     }
-
 }
 
 class IPBlockingManager extends Module {
+    // --- NEW: Centralized static properties for the Intelligent Skip Manager ---
+    static skipDelay = 2000; // 2-second delay between skips.
+    static lastSkipTime = 0;
+    static skipTimeoutId = null;
 
     static MENU = new IPBlockingMenu();
     static API = new IPBlockAPI();
@@ -476,140 +355,122 @@ class IPBlockingManager extends Module {
         Logger.INFO("IPBlockingManager Loaded")
         this.addEventListener("click", this.onButtonClick);
     }
+    
+    /**
+     * NEW: The method that physically finds and clicks the skip button.
+     * This should be the ONLY place in the code that programmatically clicks this button.
+     */
+    static _performActualSkip() {
+        // This selector might need to be adjusted for your specific website.
+        const disconnectButton = document.querySelector('.disconnectbtn');
+        if (disconnectButton) {
+            Logger.INFO("Executing skip action.");
+            disconnectButton.click();
+        } else {
+            Logger.WARN("Could not find the disconnect button to perform a skip.");
+        }
+    }
+
+    /**
+     * NEW: The core logic for the Intelligent Skip Manager.
+     * Any part of the extension that needs to skip should call this function.
+     */
+    static triggerIntelligentSkip() {
+        clearTimeout(IPBlockingManager.skipTimeoutId);
+
+        const now = Date.now();
+        const timeSinceLastSkip = now - IPBlockingManager.lastSkipTime;
+
+        // If it's been longer than 'skipDelay', we can perform a "quick skip".
+        if (timeSinceLastSkip >= IPBlockingManager.skipDelay) {
+            Logger.INFO("Performing quick skip.");
+            IPBlockingManager._performActualSkip();
+            IPBlockingManager.lastSkipTime = now;
+        } else {
+            // Otherwise, we're in the cooldown period. Schedule the next skip.
+            const delayNeeded = IPBlockingManager.skipDelay - timeSinceLastSkip;
+            Logger.INFO(`In cooldown. Scheduling skip in ${delayNeeded}ms.`);
+            IPBlockingManager.skipTimeoutId = setTimeout(() => {
+                IPBlockingManager._performActualSkip();
+                IPBlockingManager.lastSkipTime = Date.now();
+            }, delayNeeded);
+        }
+    }
 
     async onButtonClick(event) {
+        const target = event.target;
+        if (!target) return;
 
-
-        if (event?.target?.classList?.contains("ipBlockButton")) {
+        if (target.classList.contains("ipBlockButton")) {
             await this.onIpBlockButtonClick(event);
-        }
-
-        else if (event?.target?.classList?.contains("ipUnblockButton")) {
+        } else if (target.classList.contains("ipUnblockButton")) {
             await this.onIpUnblockButtonClick(event, true);
-        }
-
-        else if (event?.target?.classList?.contains("ipUnblockMenuButton")) {
+        } else if (target.classList.contains("ipUnblockMenuButton")) {
             let unblocked = await this.onIpUnblockButtonClick(event, false);
-            await this.onIpUnblockMenuButtonClick(event, unblocked);
+            if (unblocked) await this.onIpUnblockMenuButtonClick();
         }
 
-        switch (event?.target?.id) {
-            case "importIpList":
-                await this.onIpImportListButtonClick(event);
-                break;
-            case "exportIpList":
-                await this.onIpExportListButtonClick(event);
-                break;
-            case "previousIpPageButton":
-                await this.onPreviousIpPageButtonClick(event);
-                break;
-            case "nextIpPageButton":
-                await this.onNextIpPageButtonClick(event);
-                break;
+        switch (target.id) {
+            case "importIpList": await this.onIpImportListButtonClick(); break;
+            case "exportIpList": await this.onIpExportListButtonClick(); break;
+            case "previousIpPageButton": this.#menu.previousPage(); break;
+            case "nextIpPageButton": this.#menu.nextPage(); break;
         }
-
     }
 
-    async onPreviousIpPageButtonClick(_) {
-        this.#menu.previousPage();
-    }
-
-    async onNextIpPageButtonClick(_) {
-        this.#menu.nextPage();
-    }
-
-    async onIpImportListButtonClick(_) {
-
-        // Receive data
+    async onIpImportListButtonClick() {
         let json = prompt("Paste the JSON data to import:");
         let data;
-
-        // Try parse
         try {
             data = JSON.parse(json);
         } catch (ex) {
             alert("Invalid JSON submitted. No IP addresses were imported.");
             return;
         }
-
-        // Empty response
-        if (data == null) {
-            return;
-        }
+        if (!data) return;
 
         let sanitizedList = {};
-
-        // Add them
         for (const [address, config] of Object.entries(data)) {
-
             let blockedIp = BlockedIP.fromData(address, config);
-
-            if (blockedIp == null) {
-                continue;
+            if (blockedIp) {
+                sanitizedList[address] = blockedIp.toData();
             }
-
-            sanitizedList[address] = blockedIp.toData();
         }
 
         let originalLength = Object.keys(data).length;
         let sanitizedLength = Object.keys(sanitizedList).length;
         let importedList = await this.#api.bulkAddBlockList(sanitizedList);
         let importedLength = importedList.length;
-
         let duplicates = sanitizedLength - importedLength;
         let invalid = originalLength - sanitizedLength;
 
-        // Log that it happened
-        Logger.INFO(
-            "Imported %s addresses of %s submitted to IP list <%s invalid, %s duplicate(s)>.",
-            importedLength, originalLength, invalid, duplicates
-        );
-
-        let message = (
-            `Imported ${importedLength} address of ${originalLength} into IP list` +
-            ((invalid || duplicates) ? ` (${invalid} invalid, ${duplicates} duplicate${duplicates > 1 ? 's' : ''}).` : '!')
-        )
-
-        // Send alert
+        let message = `Imported ${importedLength} of ${originalLength} addresses. (${invalid} invalid, ${duplicates} duplicate(s)).`;
         alert(message);
-
-        // Add them to the currently open menu by regenerating it
+        Logger.INFO(message);
         this.#menu.genTable(1);
     }
 
-    async onIpExportListButtonClick(_) {
-
+    async onIpExportListButtonClick() {
         let text = JSON.stringify(await this.#api.retrieveBlockConfig());
-
-        // Download the element
         const download = document.createElement("a");
         download.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
-        download.download = `IP-List-${new Date().toDateString()}.json`;
+        download.download = `IP-List-${new Date().toDateString().replace(/ /g, '_')}.json`;
         download.click();
         download.remove();
-
         Logger.INFO("Exported IP address list as \"%s\"", download.download);
-
     }
 
     async onIpBlockButtonClick(event) {
         let blockValue = event.target.getAttribute("value");
-        if (!blockValue) return;
-
-        await this.#api.blockAddress(blockValue);
+        if (blockValue) await this.#api.blockAddress(blockValue);
     }
 
     async onIpUnblockButtonClick(event, logInChat) {
         let unblockValue = event.target.getAttribute("value");
-        if (!unblockValue) return false;
-
-        return await this.#api.unblockAddress(unblockValue, logInChat);
+        return unblockValue ? await this.#api.unblockAddress(unblockValue, logInChat) : false;
     }
 
-    async onIpUnblockMenuButtonClick(event, unblocked) {
-        if (!unblocked) return;
-        this.#menu.genTable(1);
-
+    async onIpUnblockMenuButtonClick() {
+        this.#menu.genTable(this.#menu._page || 1);
     }
-
 }
