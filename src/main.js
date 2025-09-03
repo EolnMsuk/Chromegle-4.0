@@ -1,6 +1,10 @@
 let lastAutoSkipTime = 0; // This will store the timestamp of the last skip
 let consecutiveSkips = 0; // Counter for rapid consecutive skips
 
+/**
+ * This function is called by the extension when it detects a blocked IP or country.
+ * It intelligently throttles skips to avoid anti-spam.
+ */
 function performDebouncedSkip() {
     const now = Date.now();
     const timeSinceLastSkip = now - lastAutoSkipTime;
@@ -35,6 +39,24 @@ function performDebouncedSkip() {
     }, delay);
 }
 
+/**
+ * This function is called when a user manually skips.
+ * It updates the cooldown state to prevent a rapid follow-up auto-skip.
+ */
+function registerManualSkip() {
+    Logger.DEBUG("Manual skip detected, updating cooldown timer.");
+    const now = Date.now();
+    const timeSinceLastSkip = now - lastAutoSkipTime;
+    const RESET_INTERVAL = 5000;
+
+    if (timeSinceLastSkip > RESET_INTERVAL) {
+        consecutiveSkips = 0;
+    }
+    
+    lastAutoSkipTime = now;
+    consecutiveSkips++;
+}
+
 
 /** @type {SettingsManager} */
 let Settings;
@@ -51,20 +73,19 @@ let Manifest;
         window.location.href = ConstantValues.websiteURL + "/banned";
         return;
     }
-
-    // if (window.location.pathname !== "/") {
-    //     console.log("Uhmegle started")
-    //     $("html").css("visibility", "visible");
-    //     return;
-    // }
+    
     $("html").css("visibility", "visible");
     Logger.INFO("Extention Starting, Loading Modules")
 
-    // runDataLoaders(
-    //     ManifestLoader,
-    //     TipsLoader,
-    //     VideoPopoutStyleLoader
-    // )
+    // FINAL UPDATE: Listen for manual user skips using the correct and stable CSS class.
+    $(document).on('click', '.skipButton', registerManualSkip);
+    
+    $(document).on('keydown', (e) => {
+        // The Escape key (keyCode 27) is the keyboard shortcut for skipping.
+        if (e.key === "Escape" || e.keyCode === 27) {
+            registerManualSkip();
+        }
+    });
 
     loadModules(
          IPBlockingManager,
