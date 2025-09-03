@@ -14,19 +14,8 @@ let Manifest;
         return;
     }
 
-    // if (window.location.pathname !== "/") {
-    //     console.log("Uhmegle started")
-    //     $("html").css("visibility", "visible");
-    //     return;
-    // }
     $("html").css("visibility", "visible");
-    Logger.INFO("Extention Starting, Loading Modules")
-
-    // runDataLoaders(
-    //     ManifestLoader,
-    //     TipsLoader,
-    //     VideoPopoutStyleLoader
-    // )
+    Logger.INFO("Extension Starting, Loading Modules")
 
     loadModules(
          IPBlockingManager,
@@ -49,10 +38,6 @@ let Manifest;
         // SplashImageHandler,
         // ClearInterestsManager,
          SettingsManager,
-         TimerSkipManager,
-         RepeatSkipManager,
-         MessageSkipManager,
-         AgeSkipManager,
         // UserCountManager,
         // BroadcastManager,
         // VideoPopoutManager,
@@ -60,3 +45,4 @@ let Manifest;
     );
 
 })();
+
