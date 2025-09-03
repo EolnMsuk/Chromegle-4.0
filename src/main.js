@@ -9,8 +9,8 @@ let consecutiveSkips = 0; // Counter for rapid consecutive skips
 function performDebouncedSkip(uuidToSkip) {
     const now = Date.now();
     const timeSinceLastSkip = now - lastAutoSkipTime;
-    const RESET_INTERVAL = 5000; // 5 seconds of no skips resets the fast skip
-    const COOLDOWN_PERIOD = 3000; // 3 seconds between consecutive skips
+    const RESET_INTERVAL = 3000; // 5 seconds of no skips resets the fast skip
+    const COOLDOWN_PERIOD = 2000; // 3 seconds between consecutive skips
 
     // Reset the consecutive skip counter if enough time has passed since the last skip
     if (timeSinceLastSkip > RESET_INTERVAL) {
