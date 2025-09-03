@@ -4,8 +4,9 @@ let consecutiveSkips = 0; // Counter for rapid consecutive skips
 /**
  * This function is called by the extension when it detects a blocked IP or country.
  * It intelligently throttles skips to avoid anti-spam.
+ * MODIFIED: Now accepts the UUID of the chat to be skipped.
  */
-function performDebouncedSkip() {
+function performDebouncedSkip(uuidToSkip) {
     const now = Date.now();
     const timeSinceLastSkip = now - lastAutoSkipTime;
     const RESET_INTERVAL = 5000; // 5 seconds of no skips resets the fast skip
@@ -26,6 +27,12 @@ function performDebouncedSkip() {
     }
 
     setTimeout(() => {
+        // NEW: Check if we are still in the same chat we intended to skip.
+        if (ChatRegistry.getUUID() !== uuidToSkip) {
+            Logger.INFO("Auto-skip cancelled because the user has already changed.");
+            return; // Abort the skip.
+        }
+
         // This assumes a function `skipIfPossible()` exists globally or in scope
         if (typeof skipIfPossible === 'function') {
             skipIfPossible();
