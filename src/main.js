@@ -1,6 +1,7 @@
 /**
  * A robust, central function to perform a skip.
- * This function is designed to be highly reliable.
+ * This function simulates a complete, realistic user click to ensure it works
+ * on modern websites that might ignore simpler click methods.
  */
 function performSkip() {
     // 1. Find all possible buttons that could be used for skipping.
@@ -8,26 +9,26 @@ function performSkip() {
     let buttonClicked = false;
 
     possibleButtons.forEach(button => {
-        // 2. Check if the button is actually visible on the page.
-        // An element is visible if it has a size and is not hidden.
+        // 2. Check if the button is actually visible on the page to avoid errors.
         const isVisible = !!(button.offsetWidth || button.offsetHeight || button.getClientRects().length);
         
         if (isVisible && !buttonClicked) {
-            console.log("Found a visible skip button, attempting robust click:", button);
+            console.log("Found visible skip button. Attempting a comprehensive click simulation.", button);
 
-            // 3. Perform a more realistic click by simulating a 'mousedown' event.
-            // This is more effective than a simple .click() on many websites.
-            const clickEvent = new MouseEvent('mousedown', {
-                view: window,
-                bubbles: true,
-                cancelable: true
-            });
+            // 3. Create a sequence of events to simulate a full, realistic click.
+            const mouseDownEvent = new MouseEvent('mousedown', { view: window, bubbles: true, cancelable: true });
+            const mouseUpEvent = new MouseEvent('mouseup', { view: window, bubbles: true, cancelable: true });
+            const clickEvent = new MouseEvent('click', { view: window, bubbles: true, cancelable: true });
 
-            // 4. Dispatch the event twice to handle any "Are you sure?" confirmations.
-            button.dispatchEvent(clickEvent);
-            button.dispatchEvent(clickEvent);
+            // 4. Fire the complete click sequence twice. This is crucial for handling
+            // any "Are you sure?" confirmation dialogs that appear after the first click.
+            for (let i = 0; i < 2; i++) {
+                button.dispatchEvent(mouseDownEvent);
+                button.dispatchEvent(mouseUpEvent);
+                button.dispatchEvent(clickEvent);
+            }
             
-            buttonClicked = true; // Ensure we only click one button.
+            buttonClicked = true; // Make sure we only click one button per skip command.
         }
     });
 
