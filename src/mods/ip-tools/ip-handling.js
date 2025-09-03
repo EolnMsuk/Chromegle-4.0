@@ -226,8 +226,8 @@ class IPGrabberManager extends Module {
             return false;
         }
         
-        // Use the intelligent skip function
-        performDebouncedSkip();
+        // MODIFIED: Pass the current chat's UUID to the skip function.
+        performDebouncedSkip(ChatRegistry.getUUID());
 
         Logger.INFO("Detected user from blocked country in chat with UUID <%s>, skipped.", ChatRegistry.getUUID());
         sendErrorLogboxMessage(`Detected user from blocked country ${geoJSON["country"]} (${code}), skipped chat.`);
