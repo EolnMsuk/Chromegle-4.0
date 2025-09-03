@@ -1,13 +1,16 @@
 class IPBlockList {
 
     #data = null;
+
     LOCAL_STORAGE_ID = "IP_BLOCK_LIST";
     DEFAULT_STORAGE_VALUE = "{}";
 
     async #get() {
+
         if (this.#data) {
             return this.#data;
         }
+
         let blockQuery = {[this.LOCAL_STORAGE_ID]: this.DEFAULT_STORAGE_VALUE};
         this.#data = JSON.parse((await chrome.storage.local.get(blockQuery))[this.LOCAL_STORAGE_ID]);
         return this.#data;
@@ -22,17 +25,34 @@ class IPBlockList {
     async add(address) {
         let data = await this.#get();
         if (!address) return;
-        data[address] = BlockedIP.toData(Math.floor(Date.now() / 1000));
+
+        data[address] = BlockedIP.toData(
+            Math.floor(Date.now() / 1000)
+        );
+
         await this.#set(data);
+
     }
 
-    async getList() { return await this.#get(); }
-    async clearList() { await this.#set({}); }
+    async getList() {
+        return await this.#get();
+    }
+
+    async clearList() {
+        let data = {};
+        await this.#set(data);
+    }
 
     async remove(address) {
         let data = await this.#get();
         if (!data) return;
-        try { delete data[address] } catch (ex) {}
+
+        try {
+            delete data[address]
+        } catch (ex) {
+
+        }
+
         await this.#set(data);
     }
 
@@ -41,23 +61,34 @@ class IPBlockList {
         return Boolean(data[address]);
     }
 
-    async isEmpty() { return Object.keys(await this.#get()).length < 1; }
+    async isEmpty() {
+        return Object.keys(await this.#get()).length < 1;
+    }
 
     async mergeWith(otherList) {
         let data = await this.#get();
         if (!data) return -1;
+
         let added = [];
         for (const [key, value] of Object.entries(otherList)) {
-            if (data[key] !== undefined) { continue; }
+
+            if (data[key] !== undefined) {
+                continue;
+            }
+
             data[key] = value;
             added.push(key);
+
         }
+
         await this.#set(data);
         return added;
+
     }
 }
 
 class BlockedIP {
+
     #address;
     #timestamp;
 
@@ -68,29 +99,62 @@ class BlockedIP {
 
     static fromData(address, data = {}) {
         address = address.trim();
-        if (!isValidIP(address)) { return null; }
+
+        if (!isValidIP(address)) {
+            return null;
+        }
+
         if (!isNumeric(data?.timestamp?.toString()) || data?.timestamp > Math.floor(Date.now() / 1000)) {
             return null;
         }
+
         return new BlockedIP(address, data.timestamp);
+
     }
 
-    static toData(timestamp) { return { timestamp: timestamp } }
-    toData() { return (BlockedIP.toData(this.#timestamp)) }
+    static toData(timestamp) {
+        return {
+            timestamp: timestamp
+        }
+    }
+
+    toData() {
+        return (
+            BlockedIP.toData(
+                this.#timestamp
+            )
+        )
+    }
+
 }
 
 
 class IPBlockAPI {
+
     #blockList = new IPBlockList();
 
-    async isAddressBlocked(address) {
-        return await this.#blockList.isBlocked(address);
+    /**
+     * Checks if an IP address is blocked and, if so, performs a skip.
+     * @param {string} address The IP address to check.
+     * @returns {Promise<boolean>} True if the user was skipped, false otherwise.
+     */
+    async checkAndSkipAddress(address) {
+        let shouldSkip = await this.#blockList.isBlocked(address);
+
+        if (shouldSkip) {
+            Logger.INFO("Skipping blocked IP address <%s>", address);
+            sendErrorLogboxMessage(`Skipped the blocked IP address ${address}`)
+                .appendChild(ButtonFactory.ipUnblockButton(address));
+            performSkip();
+        }
+
+        return shouldSkip;
     }
 
     async unblockAddress(address, logInChat = true) {
-        // NOTE: The 'confirm' and 'alert' calls here may not be ideal for a fully automated extension.
-        // They require user interaction, which might not be desirable.
-        if (!confirm(`Are you sure you want to unblock ${address}?`)) { return false; }
+        if (!confirm(`Are you sure you want to unblock ${address}?`)) {
+            return false;
+        }
         if (!await this.#blockList.isBlocked(address)) {
             alert(`The IP address ${address} is not blocked in video chat!`);
             return false;
@@ -100,29 +164,39 @@ class IPBlockAPI {
         if (logInChat) {
             sendErrorLogboxMessage(`Unblocked the IP address ${address} in video chat.`);
         }
-        document.getElementById("ipUnblockButton")?.replaceWith(ButtonFactory.ipBlockButton(address));
+        document.getElementById("ipUnblockButton")?.replaceWith(
+            ButtonFactory.ipBlockButton(address)
+        );
         return true;
     }
 
     async blockAddress(address) {
-        if (!confirm(`Are you sure you want to block ${address}?`)) { return false; }
+        if (!confirm(`Are you sure you want to block ${address}?`)) {
+            return false;
+        }
         if (await this.#blockList.isBlocked(address)) {
             alert(`The IP address ${address} is already blocked in video chat!`);
             return true;
         }
+
         await this.#blockList.add(address);
         Logger.INFO("Blocked IP address <%s> in video chat", address);
 
         if (ChatRegistry.isChatting()) {
-            IPBlockingManager.triggerIntelligentSkip();
+            // This is the fix: Directly call the simple skip function.
+            performSkip();
             sendErrorLogboxMessage(`Blocked the IP address ${address} and skipped the current chat.`);
         } else {
             sendErrorLogboxMessage(`Blocked the IP address ${address} in video chat.`);
         }
 
-        document.getElementById("ipBlockButton")?.replaceWith(ButtonFactory.ipUnblockButton(address));
+        document.getElementById("ipBlockButton")?.replaceWith(
+            ButtonFactory.ipUnblockButton(address)
+        );
         return true;
     }
+    
+    // --- All other methods in IPBlockAPI remain the same ---
 
     async retrieveBlockConfig() { return await this.#blockList.getList(); }
     async clearBlockConfig(noChange) {
@@ -135,6 +209,7 @@ class IPBlockAPI {
     async bulkAddBlockList(blockList) { return await this.#blockList.mergeWith(blockList); }
 }
 
+// The IPBlockingMenu class remains unchanged.
 class IPBlockingMenu {
     ROWS_PER_PAGE = 10;
     settingsModal = null;
@@ -143,7 +218,6 @@ class IPBlockingMenu {
     #pages = null;
     #maxPage = () => this.#page >= this.#pages;
     #minPage = () => this.#page <= 1;
-
     constructor() {
         this.settingsModal = document.createElement("div");
         $(this.settingsModal).load(getResourceURL("public/html/blocked.html"));
@@ -169,7 +243,7 @@ class IPBlockingMenu {
         let endIndex = startIndex + this.ROWS_PER_PAGE;
         let slice = sorted.slice(startIndex, endIndex);
         let delta = this.ROWS_PER_PAGE - slice.length;
-        if (delta > 0) { for (let i=0; i < delta; i++) { slice.push([null, null]); } }
+        if (delta > 0) { for (let i = 0; i < delta; i++) { slice.push([null, null]); } }
         this.updatePaginator();
         return slice;
     }
@@ -205,10 +279,8 @@ class IPBlockingMenu {
     disable() { MicroModal.hide(this.elementId); }
 }
 
+
 class IPBlockingManager extends Module {
-    static skipDelay = 2000;
-    static lastSkipTime = 0;
-    static skipTimeoutId = null;
 
     static MENU = new IPBlockingMenu();
     static API = new IPBlockAPI();
@@ -221,61 +293,47 @@ class IPBlockingManager extends Module {
         Logger.INFO("IPBlockingManager Loaded")
         this.addEventListener("click", this.onButtonClick);
     }
-    
-    /**
-     * --- MODIFIED ---
-     * This function now clicks the disconnect button TWICE.
-     * This is crucial for many chat sites that have a confirmation step ("Are you sure?").
-     * This change should fix the issue where the second blocked user was not skipped.
-     */
-    static _performActualSkip() {
-        const disconnectButton = document.querySelector('.disconnectbtn');
-        if (disconnectButton) {
-            Logger.INFO("Executing skip action (double click).");
-            disconnectButton.click(); // First click
-            disconnectButton.click(); // Second click for confirmation
-        } else {
-            Logger.WARN("Could not find the disconnect button to perform a skip.");
-        }
-    }
 
-    static triggerIntelligentSkip() {
-        clearTimeout(IPBlockingManager.skipTimeoutId);
-
-        const now = Date.now();
-        const timeSinceLastSkip = now - IPBlockingManager.lastSkipTime;
-
-        if (timeSinceLastSkip >= IPBlockingManager.skipDelay) {
-            Logger.INFO("Performing quick skip.");
-            IPBlockingManager._performActualSkip();
-            IPBlockingManager.lastSkipTime = now;
-        } else {
-            const delayNeeded = IPBlockingManager.skipDelay - timeSinceLastSkip;
-            Logger.INFO(`In cooldown. Scheduling skip in ${delayNeeded}ms.`);
-            IPBlockingManager.skipTimeoutId = setTimeout(() => {
-                IPBlockingManager._performActualSkip();
-                IPBlockingManager.lastSkipTime = Date.now();
-            }, delayNeeded);
-        }
-    }
-    
     async onButtonClick(event) {
-        if (event?.target?.classList?.contains("ipBlockButton")) { await this.onIpBlockButtonClick(event); }
-        else if (event?.target?.classList?.contains("ipUnblockButton")) { await this.onIpUnblockButtonClick(event, true); }
+
+
+        if (event?.target?.classList?.contains("ipBlockButton")) {
+            await this.onIpBlockButtonClick(event);
+        }
+
+        else if (event?.target?.classList?.contains("ipUnblockButton")) {
+            await this.onIpUnblockButtonClick(event, true);
+        }
+
         else if (event?.target?.classList?.contains("ipUnblockMenuButton")) {
             let unblocked = await this.onIpUnblockButtonClick(event, false);
-            if (unblocked) await this.onIpUnblockMenuButtonClick(event);
+            await this.onIpUnblockMenuButtonClick(event, unblocked);
         }
+
         switch (event?.target?.id) {
-            case "importIpList": await this.onIpImportListButtonClick(event); break;
-            case "exportIpList": await this.onIpExportListButtonClick(event); break;
-            case "previousIpPageButton": await this.onPreviousIpPageButtonClick(event); break;
-            case "nextIpPageButton": await this.onNextIpPageButtonClick(event); break;
+            case "importIpList":
+                await this.onIpImportListButtonClick(event);
+                break;
+            case "exportIpList":
+                await this.onIpExportListButtonClick(event);
+                break;
+            case "previousIpPageButton":
+                await this.onPreviousIpPageButtonClick(event);
+                break;
+            case "nextIpPageButton":
+                await this.onNextIpPageButtonClick(event);
+                break;
         }
+
     }
 
-    async onPreviousIpPageButtonClick(_) { this.#menu.previousPage(); }
-    async onNextIpPageButtonClick(_) { this.#menu.nextPage(); }
+    async onPreviousIpPageButtonClick(_) {
+        this.#menu.previousPage();
+    }
+
+    async onNextIpPageButtonClick(_) {
+        this.#menu.nextPage();
+    }
 
     async onIpImportListButtonClick(_) {
         let json = prompt("Paste the JSON data to import:");
@@ -318,6 +376,10 @@ class IPBlockingManager extends Module {
         return unblockValue ? await this.#api.unblockAddress(unblockValue, logInChat) : false;
     }
 
-    async onIpUnblockMenuButtonClick(event) { this.#menu.genTable(1); }
+    async onIpUnblockMenuButtonClick(event, unblocked) {
+        if (unblocked) {
+            this.#menu.genTable(1);
+        }
+    }
 }
 
