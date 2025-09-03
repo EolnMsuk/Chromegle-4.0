@@ -52,17 +52,9 @@ class IPGrabberManager extends Module {
 
     IP_MENU_TOGGLE_ID = "IP_MENU_TOGGLE";
     IP_MENU_TOGGLE_DEFAULT = "true";
-
     ENABLE_TAG = "Show Chat-Info";
     DISABLE_TAG = "Hide Chat-Info";
-
-    GEO_MAPPINGS = {
-        country: "Country",
-        state: "State",
-        city: "City",
-        isp: "Provider"
-    }
-
+    GEO_MAPPINGS = { country: "Country", state: "State", city: "City", isp: "Provider" }
     ipGrabberDiv = null;
     updateClock = null;
     languages = null;
@@ -105,7 +97,6 @@ class IPGrabberManager extends Module {
         (document.head || document.documentElement).appendChild(script);
     }
 
-
     loadLanguageList() {
         $.getJSON(getResourceURL("public/languages.json"), (json) => this.languages = json);
     }
@@ -113,51 +104,52 @@ class IPGrabberManager extends Module {
     getFlagEmoji(countryCode) {
         return String.fromCodePoint(...[...countryCode.toUpperCase()].map(x => 0x1f1a5 + x.charCodeAt(undefined)));
     }
+    
+    clearPreviousChatInfo() {
+        const innerLogBox = document.getElementsByClassName("chatWindow")[0]?.parentNode;
+        if (!innerLogBox) return;
+
+        const toggleBtn = innerLogBox.querySelector(".ipLookupButton");
+        if(toggleBtn) toggleBtn.remove();
+        
+        const existingLogItems = innerLogBox.getElementsByClassName("logitem");
+        while (existingLogItems.length > 0) {
+            existingLogItems[0].remove();
+        }
+        
+        this.ipGrabberDiv = null;
+    }
 
     async onDisplayScrapeData(event) {
+        this.clearPreviousChatInfo();
+
         let unhashedAddress = event["detail"];
-        let scrapeQuery = {[this.IP_MENU_TOGGLE_ID]: this.IP_MENU_TOGGLE_DEFAULT};
+        if (!unhashedAddress) return;
 
-        // First, check if the IP itself is blocked.
-        // The checkAndSkipAddress function will handle the skip if needed.
         if (await IPBlockingManager.API.checkAndSkipAddress(unhashedAddress)) {
-            return; // Stop if the IP was blocked and skipped.
+            return;
         }
-
-        // If the IP wasn't blocked, proceed to get location info.
+        
+        let scrapeQuery = {[this.IP_MENU_TOGGLE_ID]: this.IP_MENU_TOGGLE_DEFAULT};
         chrome.storage.sync.get(scrapeQuery, async (result) => {
             let showData = result[this.IP_MENU_TOGGLE_ID] === "true";
             let hashedAddress = await sha1(unhashedAddress);
-
-            Logger.DEBUG("Scraped IP Address from video chat | Hashed: <%s> Raw: <%s>", hashedAddress, unhashedAddress);
             await this.geolocateAndDisplay(showData, unhashedAddress, hashedAddress);
         });
     }
 
     sendChatSeenEvent(seenTimes, unhashedAddress) {
-        document.dispatchEvent(new CustomEvent(
-            "chatSeenTimes", {
-                detail: {
-                    "uuid": ChatRegistry.getUUID(),
-                    "seenTimes": seenTimes,
-                    "ipAddress": unhashedAddress
-                }
+        document.dispatchEvent(new CustomEvent("chatSeenTimes", {
+            detail: {
+                "uuid": ChatRegistry.getUUID(),
+                "seenTimes": seenTimes,
+                "ipAddress": unhashedAddress
             }
-        ));
+        }));
     }
 
     async geolocateAndDisplay(showData, unhashedAddress, hashedAddress) {
-        let previousQuery = {"PREVIOUS_HASHED_ADDRESS_LIST": {}};
-        let result = await chrome.storage.local.get(previousQuery);
-
-        const previouslyHashed = result["PREVIOUS_HASHED_ADDRESS_LIST"];
-        const seenTimes = previouslyHashed[hashedAddress] || 0;
-        this.sendChatSeenEvent(seenTimes, unhashedAddress);
-        
-        this.createAddressContainer(unhashedAddress, hashedAddress, previouslyHashed, showData, seenTimes);
-
-        previouslyHashed[hashedAddress] = seenTimes + 1;
-        await chrome.storage.local.set({"PREVIOUS_HASHED_ADDRESS_LIST": previouslyHashed});
+        this.createAddressContainer(showData);
 
         let fetchJson;
         try {
@@ -175,33 +167,49 @@ class IPGrabberManager extends Module {
         const countryCode = countryNameToCode[countryName] || 'XX';
         fetchJson.country_code = countryCode;
 
-        await this.onGeolocationRequestCompleted(unhashedAddress, fetchJson, hashedAddress, seenTimes);
+        const countrySkipEnabled = await config.countrySkipToggle.retrieveValue() === "true";
+        if (countrySkipEnabled && countryCode) {
+            const isBlocked = (await config.countrySkipInfo.retrieveValue() || "").toUpperCase().includes(countryCode);
+            if (isBlocked) {
+                Logger.INFO("Detected blocked country: %s. Skipping.", countryCode);
+                sendErrorLogboxMessage(`Skipped user from blocked country: ${countryName} (${countryCode})`);
+                performSkip();
+                return;
+            }
+        }
+        
+        try {
+            let previousQuery = {"PREVIOUS_HASHED_ADDRESS_LIST": {}};
+            let result = await chrome.storage.local.get(previousQuery);
+            const previouslyHashed = result["PREVIOUS_HASHED_ADDRESS_LIST"];
+            const seenTimes = previouslyHashed[hashedAddress] || 0;
+            
+            this.sendChatSeenEvent(seenTimes, unhashedAddress);
+
+            previouslyHashed[hashedAddress] = seenTimes + 1;
+            await chrome.storage.local.set({"PREVIOUS_HASHED_ADDRESS_LIST": previouslyHashed});
+            
+            await this.onGeolocationRequestCompleted(unhashedAddress, fetchJson, hashedAddress, seenTimes);
+        } catch (error) {
+            console.error("Error displaying geolocation info:", error);
+            sendErrorLogboxMessage("An error occurred while displaying user info.");
+        }
     }
 
-    createAddressContainer(unhashedAddress, hashedAddress, previousHashedAddresses, showData, seenTimes) {
+    createAddressContainer(showData) {
         const innerLogBox = document.getElementsByClassName("chatWindow")[0].parentNode;
-
-        // Clear any old info first
-        const existingLogItems = innerLogBox.getElementsByClassName("logitem");
-        while (existingLogItems.length > 0) {
-            existingLogItems[0].remove();
-        }
-
         this.ipGrabberDiv = document.createElement("div");
         this.ipGrabberDiv.style.display = showData ? "" : "none";
         this.ipGrabberDiv.classList.add("logitem");
-
         this.ipToggleButton.html(showData ? this.DISABLE_TAG : this.ENABLE_TAG);
         innerLogBox.appendChild(this.ipToggleButton.get(0));
         innerLogBox.appendChild(this.ipGrabberDiv);
     }
 
     async insertUnhashedAddress(unhashedAddress, isOwner = false) {
+        if (!this.ipGrabberDiv) return;
         let ipSpoiler = await (new IPAddressSpoiler(unhashedAddress)).setup();
-        let ipMessage = this.createLogBoxMessage(
-            "address_data", "IP Address: ", ipSpoiler.get()
-        );
-
+        let ipMessage = this.createLogBoxMessage("address_data", "IP Address: ", ipSpoiler.get());
         if (!isOwner) {
             ipMessage.appendChild(ButtonFactory.ipBlockButton(unhashedAddress));
         }
@@ -209,41 +217,22 @@ class IPGrabberManager extends Module {
     }
 
     async onGeolocationRequestError(unhashedAddress) {
+        if (!this.ipGrabberDiv) this.createAddressContainer(true);
         await this.insertUnhashedAddress(unhashedAddress);
-        sendErrorLogboxMessage("Geolocation failed, try again later or contact us through our discord on the home page!");
+        this.insertLogboxMessage("geo_error", "Geolocation:", " Lookup failed.");
     }
-
+    
     async onGeolocationRequestCompleted(unhashedAddress, geoJSON, hashedAddress, seenTimes) {
-        const countrySkipEnabled = await config.countrySkipToggle.retrieveValue() === "true";
-        const code = geoJSON["country_code"] || geoJSON["country_code3"];
-
-        // This is the fix: Check for the blocked country here.
-        if (countrySkipEnabled && code) {
-            const countryBlocked = (await config.countrySkipInfo.retrieveValue() || "").toUpperCase().includes(code);
-            if (countryBlocked) {
-                Logger.INFO("Detected user from blocked country (%s), skipping.", code);
-                sendErrorLogboxMessage(`Detected user from blocked country ${geoJSON["country"]} (${code}), skipped chat.`);
-                performSkip();
-                return; // Stop processing and displaying info.
-            }
-        }
-
-        // If the country was NOT blocked, proceed to display all the info.
+        if (!this.ipGrabberDiv) return;
         await this.insertUnhashedAddress(geoJSON?.ip || unhashedAddress, geoJSON?.owner || false);
-
-        Logger.DEBUG(
-            "Received IP Scraping data for chat UUID <%s>: \n\n%s",
-            ChatRegistry.getUUID(),
-            JSON.stringify(geoJSON, null, 2)
-        );
-        
         await this.displayGeolocationFields(geoJSON, hashedAddress, seenTimes);
     }
 
     insertLogboxMessage(elementId, label, ...values) {
+        if (!this.ipGrabberDiv) return;
         this.ipGrabberDiv.appendChild(
             this.createLogBoxMessage(elementId, label, ...values)
-        )
+        );
     }
 
     reduceData(num) {
@@ -255,74 +244,65 @@ class IPGrabberManager extends Module {
 
         const displayOrder = ["country", "state", "city"];
         displayOrder.forEach(key => {
-            if (this.containsValidKeys(geoJSON, key)) {
-                this.insertLogboxMessage(
-                    `${key}_data`, `${this.GEO_MAPPINGS[key]}: `, geoJSON[key]
-                );
+            if (geoJSON[key]) {
+                this.insertLogboxMessage(`${key}_data`, `${this.GEO_MAPPINGS[key]}: `, geoJSON[key]);
             }
         });
 
-        {
-            this.insertLogboxMessage( "call_time_data", "Call: ", "00:00" );
-            this.updateClock.addUpdate(
-                (date, startTime) => {
-                    let timeData = $("#call_time_data").get(0);
-                    if (timeData) timeData.childNodes[1].innerHTML = this.formatElapsedTime(date, startTime);
-                }
-            );
-        }
+        this.insertLogboxMessage("call_time_data", "Call: ", "00:00");
+        this.updateClock.addUpdate(
+            (date, startTime) => {
+                let timeData = $("#call_time_data").get(0);
+                if (timeData) timeData.childNodes[1].innerHTML = this.formatElapsedTime(date, startTime);
+            }
+        );
 
         if (!geoJSON.owner) {
             let note = new Note();
             await note.setup(hashedAddress);
-            this.insertLogboxMessage( "profile_note_data", "Note: ", note.element );
+            this.insertLogboxMessage("profile_note_data", "Note: ", note.element);
         }
         
         const plural = (seenTimes > 1 || seenTimes === 0) ? "s" : "";
         const seenBeforeDiv = $(`<div class="logitem"><span class='statuslog'>You've seen this person ${seenTimes} time${plural} before.</span></div>`).get(0);
         this.ipGrabberDiv.appendChild(seenBeforeDiv);
 
-        if (geoJSON?.owner) {
-            this.insertOwnerMessage();
-        }
+        if (geoJSON?.owner) this.insertOwnerMessage();
 
         Object.keys(this.GEO_MAPPINGS).forEach((key) => {
-            if (displayOrder.includes(key)) return;
-            if (!this.containsValidKeys(geoJSON, key)) return;
-            this.insertLogboxMessage( `${key}_data`, `${this.GEO_MAPPINGS[key]}: `, geoJSON[key] );
+            if (displayOrder.includes(key) || !geoJSON[key]) return;
+            this.insertLogboxMessage(`${key}_data`, `${this.GEO_MAPPINGS[key]}: `, geoJSON[key]);
         });
 
-        if (this.containsValidKeys(geoJSON, "accuracy")) {
+        if (geoJSON.accuracy) {
             this.insertLogboxMessage("accuracy_data", "Accuracy: ", `${geoJSON.accuracy} km radius`);
         }
 
-        if (this.containsValidKeys(geoJSON, "country_code", "country")) {
+        if (geoJSON.country_code && geoJSON.country) {
             const countryDataElement = $("#country_data").get(0);
             if (countryDataElement) {
-                countryDataElement.appendChild(
-                    $(`<span> <span class='flagText nceFont'>${this.getFlagEmoji(geoJSON.country_code)}</span> </span>`).get(0)
-                );
+                countryDataElement.appendChild($(`<span> <span class='flagText nceFont'>${this.getFlagEmoji(geoJSON.country_code)}</span> </span>`).get(0));
             }
         }
 
-        if (this.containsValidKeys(geoJSON, "timezone")) {
+        if (geoJSON.timezone) {
             this.insertLogboxMessage("local_time_data", "Local Time: ", this.getFormattedTime(geoJSON.timezone));
             this.updateClock.addUpdate(
                 (date) => {
                     let timeData = $("#local_time_data").get(0);
                     if (timeData) timeData.childNodes[1].innerHTML = this.getFormattedTime(geoJSON.timezone, date);
                 }
-            )
+            );
         }
 
-        if (this.containsValidKeys("chromegler") && geoJSON.chromegler) {
+        if (geoJSON.chromegler) {
             let chromegleLogItem = $(`<div class="logitem"><span class='statuslog' style="color: rgb(32, 143, 254);">This person is also using Chromegle right now!</span></div>`).get(0);
             this.ipGrabberDiv.appendChild(chromegleLogItem);
         }
     }
 
     getFormattedTime(timezone, date = new Date()) {
-        const options = { timeZone: timezone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' }
+        const options = { timeZone: timezone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
         return date.toLocaleString("en-US", options);
     }
 
