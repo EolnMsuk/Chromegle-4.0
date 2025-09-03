@@ -1,3 +1,19 @@
+/**
+ * A simple, central function to perform a skip.
+ * It clicks the disconnect button twice to handle any confirmation popups.
+ */
+function performSkip() {
+    const disconnectButton = document.querySelector('.disconnectbtn');
+    if (disconnectButton) {
+        console.log("Performing a skip action.");
+        disconnectButton.click(); // First click to initiate
+        disconnectButton.click(); // Second click to confirm
+    } else {
+        console.warn("Could not find the disconnect button to perform a skip.");
+    }
+}
+
+
 /** @type {SettingsManager} */
 let Settings;
 
@@ -20,28 +36,13 @@ let Manifest;
     loadModules(
          IPBlockingManager,
          ThemeManager,
-        // TopicSyncManager,
          ChatRegistryManager,
-        // PasteMenu,
          ChatManager,
-        // FilterManager,
-        // ConfirmManager,
          AutoMessageManager,
          ReconnectManager,
          IPGrabberManager,
-        // UnmoderatedChatManager,
          SpeechEngineManager,
-        // VideoWrapperManager,
-        // VideoBlockerManager,
-        // VideoScreenshotManager,
-        // FullScreenVideoManager,
-        // SplashImageHandler,
-        // ClearInterestsManager,
-         SettingsManager,
-        // UserCountManager,
-        // BroadcastManager,
-        // VideoPopoutManager,
-        // LinkEmbedManager
+         SettingsManager
     );
 
 })();
