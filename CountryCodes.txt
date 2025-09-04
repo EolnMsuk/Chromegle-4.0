@@ -1,5 +1,33 @@
 PH,EG,MA,IN,DZ,AL,PK,BD,NG,JO,TN,IQ,AE,TR,ID,MY,AM,GR,YE,SA,BH,KW,LB,NP,AT,KE
 
+# 🚫 BLOCKED COUNTRIES FROM ABOVE ^
+
+🇦🇱 Albania  
+🇩🇿 Algeria  
+🇦🇲 Armenia  
+🇦🇹 Austria  
+🇧🇭 Bahrain  
+🇧🇩 Bangladesh  
+🇪🇬 Egypt  
+🇬🇷 Greece  
+🇮🇩 Indonesia  
+🇮🇳 India  
+🇮🇶 Iraq  
+🇯🇴 Jordan  
+🇰🇪 Kenya  
+🇰🇼 Kuwait  
+🇱🇧 Lebanon  
+🇲🇾 Malaysia  
+🇲🇦 Morocco  
+🇳🇵 Nepal  
+🇳🇬 Nigeria  
+🇵🇰 Pakistan  
+🇵🇭 Philippines  
+🇸🇦 Saudi Arabia  
+🇹🇷 Türkiye  
+🇹🇳 Tunisia  
+🇦🇪 United Arab Emirates  
+🇾🇪 Yemen  
 
     "Afghanistan": "AF", "Albania": "AL", "Algeria": "DZ", "American Samoa": "AS", "Andorra": "AD",
     "Angola": "AO", "Anguilla": "AI", "Antarctica": "AQ", "Antigua and Barbuda": "AG", "Argentina": "AR",
@@ -46,3 +74,4 @@ PH,EG,MA,IN,DZ,AL,PK,BD,NG,JO,TN,IQ,AE,TR,ID,MY,AM,GR,YE,SA,BH,KW,LB,NP,AT,KE
     "United Kingdom": "GB", "United States": "US", "Uruguay": "UY", "Uzbekistan": "UZ", "Vanuatu": "VU",
     "Vatican": "VA", "Venezuela": "VE", "Vietnam": "VN", "Wallis and Futuna": "WF", "Western Sahara": "EH",
     "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
+
