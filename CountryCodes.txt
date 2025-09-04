@@ -1,7 +1,7 @@
 
 Copy and paste this into Settings > Video Tools > Blocked Countries:
 
-AE,AL,AM,AT,BD,BH,DZ,EG,GR,ID,IN,IQ,JO,KE,KW,LB,MA,MY,NG,NP,PH,PK,SA,TN,TR,YE**
+AE,AL,AM,AT,BD,BH,DZ,EG,GR,ID,IN,IQ,JO,KE,KW,LB,MA,MY,NG,NP,PH,PK,SA,TN,TR,YE
 
 🚫 BLOCKED COUNTRIES FROM ABOVE ^
 
@@ -77,4 +77,5 @@ AE,AL,AM,AT,BD,BH,DZ,EG,GR,ID,IN,IQ,JO,KE,KW,LB,MA,MY,NG,NP,PH,PK,SA,TN,TR,YE**
 	"United Arab Emirates": "AE", "United Kingdom": "GB", "United States": "US", "Uruguay": "UY",
 	"Uzbekistan": "UZ", "Vanuatu": "VU", "Vatican": "VA", "Venezuela": "VE", "Vietnam": "VN", "Wallis and Futuna": "WF", 
 	"Western Sahara": "EH", "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
+
 
