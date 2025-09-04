@@ -1,7 +1,4 @@
-recomended: below
-
-
-PH,EG,MA,IN,DZ,AL,PK,BD,NG,JO,TN,IQ,AE,TR,ID,MY,AM
+PH,EG,MA,IN,DZ,AL,PK,BD,NG,JO,TN,IQ,AE,TR,ID,MY,AM,GR,YE,SA,BH,KW,LB,NP,AT,KE
 
 
     "Afghanistan": "AF", "Albania": "AL", "Algeria": "DZ", "American Samoa": "AS", "Andorra": "AD",
@@ -44,9 +41,8 @@ PH,EG,MA,IN,DZ,AL,PK,BD,NG,JO,TN,IQ,AE,TR,ID,MY,AM
     "Spain": "ES", "Sri Lanka": "LK", "Sudan": "SD", "Suriname": "SR", "Svalbard and Jan Mayen": "SJ",
     "Swaziland": "SZ", "Sweden": "SE", "Switzerland": "CH", "Syria": "SY", "Taiwan": "TW", "Tajikistan": "TJ",
     "Tanzania": "TZ", "Thailand": "TH", "Togo": "TG", "Tokelau": "TK", "Tonga": "TO", "Trinidad and Tobago": "TT",
-    "Tunisia": "TN", "Turkey": "TR", "Turkmenistan": "TM", "Turks and Caicos Islands": "TC", "Tuvalu": "TV",
+    "Tunisia": "TN", "Türkiye": "TR", "Turkmenistan": "TM", "Turks and Caicos Islands": "TC", "Tuvalu": "TV",
     "U.S. Virgin Islands": "VI", "Uganda": "UG", "Ukraine": "UA", "United Arab Emirates": "AE",
     "United Kingdom": "GB", "United States": "US", "Uruguay": "UY", "Uzbekistan": "UZ", "Vanuatu": "VU",
     "Vatican": "VA", "Venezuela": "VE", "Vietnam": "VN", "Wallis and Futuna": "WF", "Western Sahara": "EH",
-
     "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
