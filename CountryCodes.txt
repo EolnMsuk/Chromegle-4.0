@@ -3,33 +3,35 @@ Copy and paste this into Settings > Video Tools > Blocked Countries:
 AE,AL,AM,AT,BD,BH,DZ,EG,GR,ID,IN,IQ,JO,KE,KW,LB,MA,MY,NG,NP,PH,PK,SA,TN,TR,YE
 
 🚫 BLOCKED COUNTRIES FROM ABOVE ^
+* 🇦🇱 Albania (AL)
+* 🇩🇿 Algeria (DZ)
+* 🇦🇲 Armenia (AM)
+* 🇦🇹 Austria (AT)
+* 🇧🇭 Bahrain (BH)
+* 🇧🇩 Bangladesh (BD)
+* 🇪🇬 Egypt (EG)
+* 🇬🇷 Greece (GR)
+* 🇮🇩 Indonesia (ID)
+* 🇮🇳 India (IN)
+* 🇮🇶 Iraq (IQ)
+* 🇯🇴 Jordan (JO)
+* 🇰🇪 Kenya (KE)
+* 🇰🇼 Kuwait (KW)
+* 🇱🇧 Lebanon (LB)
+* 🇲🇾 Malaysia (MY)
+* 🇲🇦 Morocco (MA)
+* 🇳🇵 Nepal (NP)
+* 🇳🇬 Nigeria (NG)
+* 🇵🇰 Pakistan (PK)
+* 🇵🇭 Philippines (PH)
+* 🇸🇦 Saudi Arabia (SA)
+* 🇹🇷 Türkiye (TR)
+* 🇹🇳 Tunisia (TN)
+* 🇦🇪 United Arab Emirates (AE)
+* 🇾🇪 Yemen (YE)
 
-🇦🇱 Albania  
-🇩🇿 Algeria  
-🇦🇲 Armenia  
-🇦🇹 Austria  
-🇧🇭 Bahrain  
-🇧🇩 Bangladesh  
-🇪🇬 Egypt  
-🇬🇷 Greece  
-🇮🇩 Indonesia  
-🇮🇳 India  
-🇮🇶 Iraq  
-🇯🇴 Jordan  
-🇰🇪 Kenya  
-🇰🇼 Kuwait  
-🇱🇧 Lebanon  
-🇲🇾 Malaysia  
-🇲🇦 Morocco  
-🇳🇵 Nepal  
-🇳🇬 Nigeria  
-🇵🇰 Pakistan  
-🇵🇭 Philippines  
-🇸🇦 Saudi Arabia  
-🇹🇷 Türkiye  
-🇹🇳 Tunisia  
-🇦🇪 United Arab Emirates  
-🇾🇪 Yemen  
+Do you want me to also **sort this list alphabetically by country name** with the codes at the end?
+
 
 Country Codes:
     "Afghanistan": "AF", "Albania": "AL", "Algeria": "DZ", "American Samoa": "AS", "Andorra": "AD",
@@ -77,6 +79,7 @@ Country Codes:
 	"United Arab Emirates": "AE", "United Kingdom": "GB", "United States": "US", "Uruguay": "UY",
 	"Uzbekistan": "UZ", "Vanuatu": "VU", "Vatican": "VA", "Venezuela": "VE", "Vietnam": "VN", "Wallis and Futuna": "WF", 
 	"Western Sahara": "EH", "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
+
 
 
 
