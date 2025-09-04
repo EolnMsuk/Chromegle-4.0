@@ -58,7 +58,7 @@ AE,AL,AM,AT,BD,BH,DZ,EG,GR,ID,IN,IQ,JO,KE,KW,LB,MA,MY,NG,NP,PH,PK,SA,TN,TR,YE**
     "Malaysia": "MY", "Maldives": "MV", "Mali": "ML", "Malta": "MT", "Marshall Islands": "MH", "Mauritania": "MR",
     "Mauritius": "MU", "Mayotte": "YT", "Mexico": "MX", "Micronesia": "FM", "Moldova": "MD", "Monaco": "MC",
     "Mongolia": "MN", "Montenegro": "ME", "Montserrat": "MS", "Morocco": "MA", "Mozambique": "MZ", "Myanmar": "MM",
-    "Namibia": "NA", "Nauru": "NR", "Nepal": "NP", "The Netherlands": "NL", "New Caledonia": "NC", "New Zealand": "NZ",
+    "Namibia": "NA", "Nauru": "NR", "Nepal": "NP", "New Caledonia": "NC", "New Zealand": "NZ",
     "Nicaragua": "NI", "Niger": "NE", "Nigeria": "NG", "Niue": "NU", "Northern Mariana Islands": "MP",
     "North Korea": "KP", "Norway": "NO", "Oman": "OM", "Pakistan": "PK", "Palau": "PW", "Palestine": "PS",
     "Panama": "PA", "Papua New Guinea": "PG", "Paraguay": "PY", "Peru": "PE", "Philippines": "PH", "Pitcairn": "PN",
@@ -71,10 +71,10 @@ AE,AL,AM,AT,BD,BH,DZ,EG,GR,ID,IN,IQ,JO,KE,KW,LB,MA,MY,NG,NP,PH,PK,SA,TN,TR,YE**
     "Solomon Islands": "SB", "Somalia": "SO", "South Africa": "ZA", "South Korea": "KR", "South Sudan": "SS",
     "Spain": "ES", "Sri Lanka": "LK", "Sudan": "SD", "Suriname": "SR", "Svalbard and Jan Mayen": "SJ",
     "Swaziland": "SZ", "Sweden": "SE", "Switzerland": "CH", "Syria": "SY", "Taiwan": "TW", "Tajikistan": "TJ",
-    "Tanzania": "TZ", "Thailand": "TH", "Togo": "TG", "Tokelau": "TK", "Tonga": "TO", "Trinidad and Tobago": "TT",
-    "Tunisia": "TN", "Türkiye": "TR", "Turkmenistan": "TM", "Turks and Caicos Islands": "TC", "Tuvalu": "TV",
-    "U.S. Virgin Islands": "VI", "Uganda": "UG", "Ukraine": "UA", "United Arab Emirates": "AE",
-    "United Kingdom": "GB", "United States": "US", "Uruguay": "UY", "Uzbekistan": "UZ", "Vanuatu": "VU",
-    "Vatican": "VA", "Venezuela": "VE", "Vietnam": "VN", "Wallis and Futuna": "WF", "Western Sahara": "EH",
-    "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
+    "Tanzania": "TZ", "Thailand": "TH", "The Netherlands": "NL", "Togo": "TG", "Tokelau": "TK", "Tonga": "TO",
+	"Trinidad and Tobago": "TT", "Tunisia": "TN", "Türkiye": "TR", "Turkmenistan": "TM",
+	"Turks and Caicos Islands": "TC", "Tuvalu": "TV", "U.S. Virgin Islands": "VI", "Uganda": "UG", "Ukraine": "UA",
+	"United Arab Emirates": "AE", "United Kingdom": "GB", "United States": "US", "Uruguay": "UY",
+	"Uzbekistan": "UZ", "Vanuatu": "VU", "Vatican": "VA", "Venezuela": "VE", "Vietnam": "VN", "Wallis and Futuna": "WF", 
+	"Western Sahara": "EH", "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
 
