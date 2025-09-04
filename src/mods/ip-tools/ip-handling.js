@@ -26,7 +26,7 @@ const countryNameToCode = {
     "Malaysia": "MY", "Maldives": "MV", "Mali": "ML", "Malta": "MT", "Marshall Islands": "MH", "Mauritania": "MR",
     "Mauritius": "MU", "Mayotte": "YT", "Mexico": "MX", "Micronesia": "FM", "Moldova": "MD", "Monaco": "MC",
     "Mongolia": "MN", "Montenegro": "ME", "Montserrat": "MS", "Morocco": "MA", "Mozambique": "MZ", "Myanmar": "MM",
-    "Namibia": "NA", "Nauru": "NR", "Nepal": "NP", "New Caledonia": "NC", "New Zealand": "NZ",
+    "Namibia": "NA", "Nauru": "NR", "Nepal": "NP", "Netherlands": "NL", "New Caledonia": "NC", "New Zealand": "NZ",
     "Nicaragua": "NI", "Niger": "NE", "Nigeria": "NG", "Niue": "NU", "Northern Mariana Islands": "MP",
     "North Korea": "KP", "Norway": "NO", "Oman": "OM", "Pakistan": "PK", "Palau": "PW", "Palestine": "PS",
     "Panama": "PA", "Papua New Guinea": "PG", "Paraguay": "PY", "Peru": "PE", "Philippines": "PH", "Pitcairn": "PN",
@@ -40,11 +40,11 @@ const countryNameToCode = {
     "Spain": "ES", "Sri Lanka": "LK", "Sudan": "SD", "Suriname": "SR", "Svalbard and Jan Mayen": "SJ",
     "Swaziland": "SZ", "Sweden": "SE", "Switzerland": "CH", "Syria": "SY", "Taiwan": "TW", "Tajikistan": "TJ",
     "Tanzania": "TZ", "Thailand": "TH", "The Netherlands": "NL", "Togo": "TG", "Tokelau": "TK", "Tonga": "TO",
-	"Trinidad and Tobago": "TT", "Tunisia": "TN", "Türkiye": "TR", "Turkmenistan": "TM",
-	"Turks and Caicos Islands": "TC", "Tuvalu": "TV", "U.S. Virgin Islands": "VI", "Uganda": "UG", "Ukraine": "UA",
-	"United Arab Emirates": "AE", "United Kingdom": "GB", "United States": "US", "Uruguay": "UY",
-	"Uzbekistan": "UZ", "Vanuatu": "VU", "Vatican": "VA", "Venezuela": "VE", "Vietnam": "VN", "Wallis and Futuna": "WF", 
-	"Western Sahara": "EH", "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
+    "Trinidad and Tobago": "TT", "Tunisia": "TN", "Türkiye": "TR", "Turkmenistan": "TM",
+    "Turks and Caicos Islands": "TC", "Tuvalu": "TV", "U.S. Virgin Islands": "VI", "Uganda": "UG", "Ukraine": "UA",
+    "United Arab Emirates": "AE", "United Kingdom": "GB", "United States": "US", "Uruguay": "UY",
+    "Uzbekistan": "UZ", "Vanuatu": "VU", "Vatican": "VA", "Venezuela": "VE", "Vietnam": "VN", "Wallis and Futuna": "WF",
+    "Western Sahara": "EH", "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
 };
 
 
@@ -112,8 +112,16 @@ class IPGrabberManager extends Module {
         $.getJSON(getResourceURL("public/languages.json"), (json) => this.languages = json);
     }
 
+    /**
+     * CORRECTED: This function now correctly calculates the Unicode code points for flag emojis.
+     */
     getFlagEmoji(countryCode) {
-        return String.fromCodePoint(...[...countryCode.toUpperCase()].map(x => 0x1f1a5 + x.charCodeAt(undefined)));
+        if (!countryCode || countryCode.length !== 2) return '❔';
+        const codePoints = countryCode
+          .toUpperCase()
+          .split('')
+          .map(char => 127397 + char.charCodeAt());
+        return String.fromCodePoint(...codePoints);
     }
 
     onDisplayScrapeData(event) {
@@ -344,16 +352,6 @@ class IPGrabberManager extends Module {
             this.insertOwnerMessage();
         }
 
-        // Coordinates (already commented out)
-        /*
-        if (this.containsValidKeys(geoJSON, "longitude", "latitude")) {
-            this.insertLogboxMessage(
-                "long_lat_data", "Coordinates: ", `${this.reduceData(geoJSON.longitude)}/${this.reduceData(geoJSON.latitude)} `,
-                `<a class="ipMapsButton" href='https://maps.google.com/maps?q=${geoJSON.latitude},${geoJSON.longitude}' target="_blank">(Google Maps)</a>`
-            )
-        }
-        */
-
         // Automatic geolocation keys (now for remaining items like 'isp')
         Object.keys(this.GEO_MAPPINGS).forEach((key) => {
             // Skip the ones we already handled
@@ -388,18 +386,6 @@ class IPGrabberManager extends Module {
                     `).get(0)
                 );
             }
-
-            // Languages (already commented out)
-            /*
-            if (this.languages != null) {
-                let userLanguages = this.languages[geoJSON.country_code]?.join(", ") || null;
-                if (userLanguages != null) {
-                    this.insertLogboxMessage(
-                        "language_data", "Language(s): ", userLanguages
-                    )
-                }
-            }
-            */
         }
 
         // Local Time
