@@ -1,7 +1,7 @@
 let ConstantValues = {
     websiteURL: "https://discord.gg/omeglestream",
     discordURL: "https://discord.gg/omeglestream",
-    githubURL: "https://discord.gg/omeglestream",
+    githubURL: "https://github.com/EolnMsuk/Chromegle-4.0",
     apiURL: "https://m52o1m3c29.execute-api.eu-central-1.amazonaws.com/",
     _helpfulTips: ["Join the Discord!"],
     getHelpfulTip: () => {
