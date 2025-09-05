@@ -10,9 +10,8 @@ A Javascript Chrome (and Opera) Extension for Uhmegle, certified for Chrome 137 
 # Features
 
 ## Working Features
-- NEW - Country Blocker
+- NEW - Country Blocker / Cooldown Skips
 - NEW - Face Detection Bypass
-- NEW - Added cooldowns to skipping
 - Geolocator
 - Calltime Counter
 - Voice Commands eg. omegle skip
