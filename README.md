@@ -13,16 +13,16 @@ A Javascript Chrome (and Opera) Extension for Uhmegle, certified for Chrome 137 
 - NEW - Country Blocker / Cooldown Skips
 - NEW - Face Detection Bypass
 - Geolocator
+- IP Blocker
+- Session Counter
 - Calltime Counter
-- Voice Commands eg. omegle skip
-- Ip Blocker
-- "Youve seen this person x times before" counter
-- Auto-Skip
-  - Repeats
-  - Timer
-  - Words
 
-## Broken/Untested
+## Untested
+- Voice Commands eg. omegle skip
+- Auto Greetings
+- Auto Reconnect
+
+## Broken
 - Paste Hotbar
 - Sexual Filter
 - Profanity Filter
@@ -31,8 +31,6 @@ A Javascript Chrome (and Opera) Extension for Uhmegle, certified for Chrome 137 
 - Video-Popout tool
 - Auto-Skip Age
 - Theme Settings
-- Auto Greetings
-- Auto Reconnect
 
 # Installation
 
