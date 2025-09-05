@@ -18,9 +18,9 @@
 - Calltime Counter
 
 ## Untested
-- Voice Commands eg. omegle skip*
-- Auto Greetings*
-- Auto Reconnect*
+- Voice Commands eg. omegle skip
+- Auto Greetings
+- Auto Reconnect
 
 ## Broken
 - *~~Paste Hotbar~~*
