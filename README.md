@@ -23,14 +23,14 @@
 - *Auto Reconnect**
 
 ## Broken
-- ~~Paste Hotbar~~
-- ~~Sexual Filter~~
-- ~~Profanity Filter~~
-- ~~Fullscreen tool~~
-- ~~Screenshot tool~~
-- ~~Video-Popout tool~~
-- ~~Auto-Skip Age~~
-- ~~Theme Settings~~
+- *~~Paste Hotbar~~*
+- *~~Sexual Filter~~*
+- *~~Profanity Filter~~*
+- *~~Fullscreen tool~~*
+- *~~Screenshot tool~~*
+- *~~Video-Popout tool~~*
+- *~~Auto-Skip Age~~*
+- *~~Theme Settings~~*
 
 # Installation
 
