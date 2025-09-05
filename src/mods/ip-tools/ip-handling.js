@@ -268,14 +268,21 @@ class IPGrabberManager extends Module {
         return true;
     }
 
-    // MODIFIED: Accept chatUUID and perform a check.
+    // UPDATED: Accept chatUUID, perform block check before displaying info.
     async onGeolocationRequestCompleted(unhashedAddress, geoJSON, hashedAddress, seenTimes, chatUUID) {
-        // NEW: Check if the call is stale before modifying the DOM.
+        // Check if the call is stale before modifying the DOM.
         if (ChatRegistry.getUUID() !== chatUUID) return;
 
-        await this.insertUnhashedAddress(geoJSON?.ip || unhashedAddress, geoJSON?.owner || false);
-
         const countrySkipEnabled = await config.countrySkipToggle.retrieveValue() === "true";
+
+        // 1. CHECK FIRST: Handle blocked countries BEFORE displaying anything.
+        if (await this.skipBlockedCountries(countrySkipEnabled, geoJSON)) {
+            // If the user was skipped, abort the rest of the function to prevent their data from being displayed.
+            return;
+        }
+
+        // 2. DISPLAY SECOND: If the country wasn't blocked, proceed with displaying the data.
+        await this.insertUnhashedAddress(geoJSON?.ip || unhashedAddress, geoJSON?.owner || false);
 
         Logger.DEBUG(
             "Received IP Scraping data for chat UUID <%s> from the Chromegle web-server as the following JSON payload: \n\n%s",
@@ -283,13 +290,7 @@ class IPGrabberManager extends Module {
             JSON.stringify(geoJSON, null, 2)
         );
         
-        // Display geolocation-based fields FIRST
         await this.displayGeolocationFields(geoJSON, hashedAddress, seenTimes);
-
-        // Handle blocked countries LAST
-        if (await this.skipBlockedCountries(countrySkipEnabled, geoJSON)) {
-            return;
-        }
     }
 
     insertLogboxMessage(elementId, label, ...values) {
