@@ -1,14 +1,14 @@
 Copy and paste this into Settings > Video Tools > Blocked Countries:
 
-AE,AL,AM,AT,BD,BH,DZ,EG,GR,ID,IN,IQ,JO,KE,KW,LB,MA,MY,NG,NP,PH,PK,SA,TN,TR,YE
+AE,AL,AM,BD,BH,DZ,EG,GR,ID,IN,IQ,JO,KE,KW,LB,LK,MA,MY,NG,NP,PH,PK,SA,SC,TN,TR,QA,YE
 
-🚫 BLOCKED COUNTRIES FROM ABOVE ^
+🚫 **BLOCKED COUNTRIES**
+* 🇦🇪 United Arab Emirates (AE)
 * 🇦🇱 Albania (AL)
-* 🇩🇿 Algeria (DZ)
 * 🇦🇲 Armenia (AM)
-* 🇦🇹 Austria (AT)
-* 🇧🇭 Bahrain (BH)
 * 🇧🇩 Bangladesh (BD)
+* 🇧🇭 Bahrain (BH)
+* 🇩🇿 Algeria (DZ)
 * 🇪🇬 Egypt (EG)
 * 🇬🇷 Greece (GR)
 * 🇮🇩 Indonesia (ID)
@@ -18,16 +18,18 @@ AE,AL,AM,AT,BD,BH,DZ,EG,GR,ID,IN,IQ,JO,KE,KW,LB,MA,MY,NG,NP,PH,PK,SA,TN,TR,YE
 * 🇰🇪 Kenya (KE)
 * 🇰🇼 Kuwait (KW)
 * 🇱🇧 Lebanon (LB)
-* 🇲🇾 Malaysia (MY)
+* 🇱🇰 Sri Lanka (LK)
 * 🇲🇦 Morocco (MA)
-* 🇳🇵 Nepal (NP)
+* 🇲🇾 Malaysia (MY)
 * 🇳🇬 Nigeria (NG)
-* 🇵🇰 Pakistan (PK)
+* 🇳🇵 Nepal (NP)
 * 🇵🇭 Philippines (PH)
+* 🇵🇰 Pakistan (PK)
+* 🇶🇦 Qatar (QA)
 * 🇸🇦 Saudi Arabia (SA)
-* 🇹🇷 Türkiye (TR)
+* 🇸🇨 Seychelles (SC)
 * 🇹🇳 Tunisia (TN)
-* 🇦🇪 United Arab Emirates (AE)
+* 🇹🇷 Türkiye (TR)
 * 🇾🇪 Yemen (YE)
 
 Country Codes:
@@ -76,8 +78,6 @@ Country Codes:
 	"United Arab Emirates": "AE", "United Kingdom": "GB", "United States": "US", "Uruguay": "UY",
 	"Uzbekistan": "UZ", "Vanuatu": "VU", "Vatican": "VA", "Venezuela": "VE", "Vietnam": "VN", "Wallis and Futuna": "WF", 
 	"Western Sahara": "EH", "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
-
-
 
 
 
