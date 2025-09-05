@@ -30,9 +30,6 @@ AE,AL,AM,AT,BD,BH,DZ,EG,GR,ID,IN,IQ,JO,KE,KW,LB,MA,MY,NG,NP,PH,PK,SA,TN,TR,YE
 * 🇦🇪 United Arab Emirates (AE)
 * 🇾🇪 Yemen (YE)
 
-Do you want me to also **sort this list alphabetically by country name** with the codes at the end?
-
-
 Country Codes:
     "Afghanistan": "AF", "Albania": "AL", "Algeria": "DZ", "American Samoa": "AS", "Andorra": "AD",
     "Angola": "AO", "Anguilla": "AI", "Antarctica": "AQ", "Antigua and Barbuda": "AG", "Argentina": "AR",
@@ -79,6 +76,7 @@ Country Codes:
 	"United Arab Emirates": "AE", "United Kingdom": "GB", "United States": "US", "Uruguay": "UY",
 	"Uzbekistan": "UZ", "Vanuatu": "VU", "Vatican": "VA", "Venezuela": "VE", "Vietnam": "VN", "Wallis and Futuna": "WF", 
 	"Western Sahara": "EH", "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
+
 
 
 
