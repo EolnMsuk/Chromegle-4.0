@@ -9,7 +9,7 @@
 
 # Features
 
-## Working Features
+## Tested
 - *NEW - Country Blocker / Cooldown Skips*
 - *NEW - Face Detection Bypass*
 - *Geolocator*
@@ -17,7 +17,7 @@
 - *Session Counter*
 - *Calltime Counter*
 
-## Untested*
+## Untested
 - *Voice Commands eg. omegle skip**
 - *Auto Greetings**
 - *Auto Reconnect**
