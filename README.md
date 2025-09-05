@@ -47,9 +47,8 @@ Manual installation is fairly easy thanks to Chrome's great developer support:
 6. Use on https://www.uhmegle.com/ freely
 ```
 
-<img width="820" height="635" alt="countryblock" src="https://github.com/user-attachments/assets/85a729b9-85c1-42aa-9dc0-9218bd1e7e16" />
+<img width="1050" height="1134" alt="Demo" src="https://github.com/user-attachments/assets/0ed177b8-5c72-43ce-b55a-030e02be9ab0" />
 
-<img width="996" height="499" alt="Demo" src="https://github.com/user-attachments/assets/6dab76ac-898a-4865-9d4d-77366ee69810" />
 
 ## Authors
 
