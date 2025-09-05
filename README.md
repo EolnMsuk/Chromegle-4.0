@@ -18,19 +18,19 @@ A Javascript Chrome (and Opera) Extension for Uhmegle, certified for Chrome 137 
 - Calltime Counter
 
 ## Untested
-- Voice Commands eg. omegle skip
-- Auto Greetings
-- Auto Reconnect
+- ~~Voice Commands eg. omegle skip~~
+- ~~Auto Greetings~~
+- ~~Auto Reconnect~~
 
 ## Broken
-- Paste Hotbar
-- Sexual Filter
-- Profanity Filter
-- Fullscreen tool
-- Screenshot tool
-- Video-Popout tool
-- Auto-Skip Age
-- Theme Settings
+- ~~Paste Hotbar~~
+- ~~Sexual Filter~~
+- ~~Profanity Filter~~
+- ~~Fullscreen tool~~
+- ~~Screenshot tool~~
+- ~~Video-Popout tool~~
+- ~~Auto-Skip Age~~
+- ~~Theme Settings~~
 
 # Installation
 
