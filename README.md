@@ -10,17 +10,17 @@
 # Features
 
 ## Tested
-- *NEW - Country Blocker / Cooldown Skips*
-- *NEW - Face Detection Bypass*
-- *Geolocator*
-- *IP Blocker*
-- *Session Counter*
-- *Calltime Counter*
+- *NEW* - Country Blocker / Cooldown Skips
+- *NEW* - Face Detection Bypass*
+- Geolocator
+- IP Blocker
+- Session Counter
+- Calltime Counter
 
 ## Untested
-- *Voice Commands eg. omegle skip**
-- *Auto Greetings**
-- *Auto Reconnect**
+- Voice Commands eg. omegle skip*
+- Auto Greetings*
+- Auto Reconnect*
 
 ## Broken
 - *~~Paste Hotbar~~*
