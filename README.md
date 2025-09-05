@@ -17,12 +17,10 @@ A Javascript Chrome (and Opera) Extension for Uhmegle, certified for Chrome 137 
 - Voice Commands eg. omegle skip
 - Ip Blocker
 - "Youve seen this person x times before" counter
-- Greeting Messages
 - Auto-Skip
   - Repeats
   - Timer
   - Words
-- Auto-Reconnect
 
 ## Broken/Untested
 - Paste Hotbar
@@ -33,6 +31,8 @@ A Javascript Chrome (and Opera) Extension for Uhmegle, certified for Chrome 137 
 - Video-Popout tool
 - Auto-Skip Age
 - Theme Settings
+- Auto Greetings
+- Auto Reconnect
 
 # Installation
 
