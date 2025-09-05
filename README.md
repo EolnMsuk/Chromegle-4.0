@@ -17,7 +17,7 @@
 - *Session Counter*
 - *Calltime Counter*
 
-## Untested
+## Untested*
 - *Voice Commands eg. omegle skip**
 - *Auto Greetings**
 - *Auto Reconnect**
