@@ -22,7 +22,7 @@
 - Auto Greetings*
 - Auto Reconnect*
 
-## ~~Broken~~
+## Broken
 - *~~Paste Hotbar~~*
 - *~~Sexual Filter~~*
 - *~~Profanity Filter~~*
