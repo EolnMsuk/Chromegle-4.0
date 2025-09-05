@@ -2,7 +2,7 @@ Copy and paste this into Settings > Video Tools > Blocked Countries:
 
 AE,AL,AM,BD,BH,DZ,EG,GR,ID,IN,IQ,JO,KE,KW,LB,LK,MA,MY,NG,NP,PH,PK,SA,SC,TN,TR,QA,YE
 
-🚫 **BLOCKED COUNTRIES**
+🚫 **BLOCKED COUNTRIES ^**
 * 🇦🇪 United Arab Emirates (AE)
 * 🇦🇱 Albania (AL)
 * 🇦🇲 Armenia (AM)
@@ -78,6 +78,7 @@ Country Codes:
 	"United Arab Emirates": "AE", "United Kingdom": "GB", "United States": "US", "Uruguay": "UY",
 	"Uzbekistan": "UZ", "Vanuatu": "VU", "Vatican": "VA", "Venezuela": "VE", "Vietnam": "VN", "Wallis and Futuna": "WF", 
 	"Western Sahara": "EH", "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
+
 
 
 
