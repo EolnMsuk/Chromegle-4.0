@@ -11,7 +11,7 @@
 
 ## Tested
 - *NEW* - Country Blocker / Cooldown Skips
-- *NEW* - Face Detection Bypass*
+- *NEW* - Face Detection Bypass
 - Geolocator
 - IP Blocker
 - Session Counter
