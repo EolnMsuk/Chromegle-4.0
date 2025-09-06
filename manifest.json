@@ -16,7 +16,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.uhmegle.com/video"],
+      "matches": ["*://*.uhmegle.com/*"],
       "js": ["src/core/face-bypass.js"],
       "run_at": "document_start",
       "world": "MAIN"
@@ -70,7 +70,7 @@
         "src/main.js"
       ],
       "matches": [
-        "*://*.uhmegle.com/video"
+        "*://*.uhmegle.com/*"
       ]
     }
   ],
@@ -90,7 +90,7 @@
         "/public/images/SettingsButton.png"
       ],
       "matches": [
-        "*://*.uhmegle.com/video"
+        "*://*.uhmegle.com/*"
       ]
     }
   ],
@@ -100,7 +100,7 @@
   ],
   "externally_connectable": {
     "matches": [
-      "*://*.uhmegle.com/video"
+      "*://*.uhmegle.com/*"
     ]
   }
 }
