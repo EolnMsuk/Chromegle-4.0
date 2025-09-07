@@ -343,7 +343,7 @@ class IPGrabberManager extends Module {
         
         // 4. You've seen this person...
         const plural = (seenTimes > 1 || seenTimes === 0) ? "s" : "";
-        const seenBeforeDiv = $(`<div class="logitem"><span class='statuslog'>You've seen this person ${seenTimes} time${plural} before.</span></div>`).get(0);
+        const seenBeforeDiv = $(`<div class="logitem"><span class='statuslog'>Seen ${seenTimes} time${plural}.</span></div>`).get(0);
         this.ipGrabberDiv.appendChild(seenBeforeDiv);
 
         // --- END OF REORDERED SECTION ---
