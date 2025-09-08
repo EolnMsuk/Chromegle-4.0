@@ -9,7 +9,7 @@
 # Features
 
 ## Tested
-- *NEW* - Country Blocker / Cooldown Skips
+- *NEW* - Country Blocker / skip logic
 - *NEW* - Face Detection Bypass
 - Geolocator
 - IP Blocker
