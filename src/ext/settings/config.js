@@ -184,7 +184,7 @@ const config = {
     "countrySkipToggle": new ToggleEdit({
         "elementName": "countrySkipToggle",
         "storageName": "COUNTRY_SKIP_TOGGLE",
-        "default": "false",
+        "default": "true",
         "warning": {
             "message": "This feature may get you banned for spam-skipping. By enabling it you agree you are aware of the risk of being banned using automation "
                 + "tools like this one provided by Chromegle.",
@@ -195,7 +195,7 @@ const config = {
         "storageName": "COUNTRY_SKIP_FIELD",
         "prompt": "Enter the countries you wish to skip as country codes, separated by commas. " +
             "These can be 2 or 3 letter codes.\n\nVisit https://www.iban.com/country-codes for the full, up-to-date list of available country codes.",
-        "default": "KP,VA",
+        "default": "AE,AL,AM,BD,DZ,EG,GR,ID,IN,IQ,JO,KE,KW,LB,LK,LY,MA,MT,MY,NG,NP,PH,PK,SA,SC,TN,TR,QA,YE",
         "check": (response) => {
 
             // Accept all no-values
@@ -274,17 +274,17 @@ const config = {
     "popoutToolButtonToggle": new ToggleEdit({
         "elementName": "popoutToolButtonToggle",
         "storageName": "POPOUT_TOOL_BUTTON_TOGGLE",
-        "default": "true"
+        "default": "false"
     }),
     "fullscreenToolButtonToggle": new ToggleEdit({
         "elementName": "fullscreenToolButtonToggle",
         "storageName": "FULLSCREEN_TOOL_BUTTON_TOGGLE",
-        "default": "true"
+        "default": "false"
     }),
     "screenshotToolButtonToggle": new ToggleEdit({
         "elementName": "screenshotToolButtonToggle",
         "storageName": "SCREENSHOT_TOOL_BUTTON_TOGGLE",
-        "default": "true"
+        "default": "false"
     }),
     "skipRepeatsToggle": new ToggleEdit({
         "elementName": "skipRepeatsToggle",
