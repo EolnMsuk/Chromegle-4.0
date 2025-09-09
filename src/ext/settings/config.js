@@ -184,7 +184,7 @@ const config = {
     "countrySkipToggle": new ToggleEdit({
         "elementName": "countrySkipToggle",
         "storageName": "COUNTRY_SKIP_TOGGLE",
-        "default": "true",
+        "default": "false",
         "warning": {
             "message": "This feature may get you banned for spam-skipping. By enabling it you agree you are aware of the risk of being banned using automation "
                 + "tools like this one provided by Chromegle.",
