@@ -1,4 +1,5 @@
-🚫 **BLOCKED COUNTRIES BY DEFAULT**
+🚫 **BLOCKED COUNTRIES (pre-loaded list**
+
 * 🇦🇪 United Arab Emirates (AE)
 * 🇦🇱 Albania (AL)
 * 🇦🇲 Armenia (AM)
@@ -73,6 +74,7 @@ Country Codes:
 	"United Arab Emirates": "AE", "United Kingdom": "GB", "United States": "US", "Uruguay": "UY",
 	"Uzbekistan": "UZ", "Vanuatu": "VU", "Vatican": "VA", "Venezuela": "VE", "Vietnam": "VN", "Wallis and Futuna": "WF", 
 	"Western Sahara": "EH", "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
+
 
 
 
