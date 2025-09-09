@@ -1,5 +1,6 @@
-🚫 **BLOCKED COUNTRIES (pre-loaded list)**
+Pre-Loaded List of Blocked Country Codes: AE,AL,AM,BD,DZ,EG,GR,ID,IN,IQ,JO,KE,KW,LB,LK,LY,MA,MT,MY,NG,NP,PH,PK,SA,SC,TN,TR,QA,YE
 
+🚫 **PRE-BLOCKED COUNTRIES**
 * 🇦🇪 United Arab Emirates (AE)
 * 🇦🇱 Albania (AL)
 * 🇦🇲 Armenia (AM)
@@ -28,7 +29,8 @@
 * 🇹🇷 Türkiye (TR)
 * 🇾🇪 Yemen (YE)
 
-Country Codes:
+
+ALL COUNTRY CODES (reference):
     "Afghanistan": "AF", "Albania": "AL", "Algeria": "DZ", "American Samoa": "AS", "Andorra": "AD",
     "Angola": "AO", "Anguilla": "AI", "Antarctica": "AQ", "Antigua and Barbuda": "AG", "Argentina": "AR",
     "Armenia": "AM", "Aruba": "AW", "Australia": "AU", "Austria": "AT", "Azerbaijan": "AZ", "Bahamas": "BS",
@@ -74,6 +76,7 @@ Country Codes:
 	"United Arab Emirates": "AE", "United Kingdom": "GB", "United States": "US", "Uruguay": "UY",
 	"Uzbekistan": "UZ", "Vanuatu": "VU", "Vatican": "VA", "Venezuela": "VE", "Vietnam": "VN", "Wallis and Futuna": "WF", 
 	"Western Sahara": "EH", "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
+
 
 
 
