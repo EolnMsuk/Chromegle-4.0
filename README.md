@@ -1,7 +1,7 @@
 ## Chromegle-4.0: IP Pulller & Chat Info for Uhmegle!
 *A Javascript Chrome (and Opera) Extension for Uhmegle, certified for Chrome 137 and above.*
 
-- [Features](#features)
+- [Features](#tested-features)
 - [Installation](#installation)
 - [Authors](#authors)
 - [Project License](#license)
