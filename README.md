@@ -6,7 +6,7 @@
 - [Authors](#authors)
 - [Project License](#license)
 
-## Features
+## Tested Features
 - **Country Blocker / skip logic - *New***
 - **Face Detection Bypass - *New***
 - **Hide Watermark - *New***
@@ -16,12 +16,10 @@
 - Session Counter
 - Calltime Counter
 
-## Untested
+## *Untested / ~~Broken~~*
 - *Voice Commands*
 - *Auto Greetings*
 - *Auto Reconnect*
-
-## Broken
 - *~~Paste Hotbar~~*
 - *~~Sexual Filter~~*
 - *~~Profanity Filter~~*
