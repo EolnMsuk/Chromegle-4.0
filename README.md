@@ -15,6 +15,7 @@
 - IP Blocker
 - Session Counter
 - Calltime Counter
+- IP Based Notes
 
 ## Untested
 - Voice Commands
