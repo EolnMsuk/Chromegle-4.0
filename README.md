@@ -56,7 +56,7 @@ Manual installation is fairly easy thanks to Chrome's great developer support:
 
 * **xanzinfl** - *Additional Feature Support* - [xanzinfl](https://github.com/xanzinfl)
 
-* **EolnMsuk** - *Additional Features* - [EolnMsuk](https://github.com/EolnMsuk)
+* **EolnMsuk** - *Additional Features* - [EolnMsuk](https://github.com/EolnMsuk) / [$eolnmsuk](https://github.com/EolnMsuk)
 
 ## License
 
