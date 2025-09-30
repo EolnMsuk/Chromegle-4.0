@@ -6,9 +6,7 @@
 - [Authors](#authors)
 - [Project License](#license)
 
-# Features
-
-## Enabled
+## Features
 - *NEW* - Country Blocker / skip logic (fixed)
 - *NEW* - Face Detection Bypass (added)
 - *NEW* - Hide Watermark (fixed)
