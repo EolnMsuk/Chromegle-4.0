@@ -17,9 +17,9 @@
 - Calltime Counter
 
 ## Untested
-- Voice Commands
-- Auto Greetings
-- Auto Reconnect
+- *Voice Commands*
+- *Auto Greetings*
+- *Auto Reconnect*
 
 ## Broken
 - *~~Paste Hotbar~~*
