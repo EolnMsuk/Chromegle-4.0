@@ -8,11 +8,11 @@
 
 # Features
 
-## Tested
+## Enabled
 - *NEW* - Country Blocker / skip logic (fixed)
 - *NEW* - Face Detection Bypass (added)
 - *NEW* - Hide Watermark (fixed)
-- Geolocator
+- Geolocation
 - IP Blocker
 - Session Counter
 - Calltime Counter
