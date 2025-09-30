@@ -11,6 +11,7 @@
 ## Tested
 - *NEW* - Country Blocker / skip logic
 - *NEW* - Face Detection Bypass
+- *Updated* - Hide Wattermark
 - Geolocator
 - IP Blocker
 - Session Counter
