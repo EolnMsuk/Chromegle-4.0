@@ -8,7 +8,7 @@
 
 ## Features
 - Country Blocker / skip logic - *NEW*
-- Face Detection Bypass *NEW*
+- Face Detection Bypass - *NEW*
 - Hide Watermark - *NEW*
 - Geolocation
 - IP Blocker
