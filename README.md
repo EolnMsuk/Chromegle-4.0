@@ -50,7 +50,6 @@ Manual installation is fairly easy thanks to Chrome's great developer support:
 
 * **EolnMsuk** - *Additional Features & Support* - [EolnMsuk](https://github.com/EolnMsuk) / [$eolnmsuk](https://cash.app/$eolnmsuk)
 * **xanzinfl** - *Additional Features & Support* - [xanzinfl](https://github.com/xanzinfl)
-* **LR7** - *Initial Work for Thundr Support*
 * **flouflouit** - *Migration to Uhmegle* - [flouflouit](https://github.com/flouflouit)
 * **Isaac Kogan** - *Initial work* - [isaackogan](https://github.com/isaackogan)
 
