@@ -9,9 +9,9 @@
 # Features
 
 ## Tested
-- *NEW* - Country Blocker / skip logic
-- *NEW* - Face Detection Bypass
-- *Updated* - Hide Wattermark
+- *NEW* - Country Blocker / skip logic (fixed)
+- *NEW* - Face Detection Bypass (added)
+- *NEW* - Hide Watermark (fixed)
 - Geolocator
 - IP Blocker
 - Session Counter
