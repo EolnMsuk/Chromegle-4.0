@@ -7,9 +7,9 @@
 - [Project License](#license)
 
 ## Features
-- *NEW* - Country Blocker / skip logic (fixed)
-- *NEW* - Face Detection Bypass (added)
-- *NEW* - Hide Watermark (fixed)
+- Country Blocker / skip logic - *NEW*
+- Face Detection Bypass *NEW*
+- Hide Watermark - *NEW*
 - Geolocation
 - IP Blocker
 - Session Counter
