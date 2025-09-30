@@ -49,7 +49,7 @@ Manual installation is fairly easy thanks to Chrome's great developer support:
 
 ## Authors
 
-* **EolnMsuk** - 2025 - *Additional Features & Support* - [EolnMsuk](https://github.com/EolnMsuk) / [$eolnmsuk](https://cash.app/$eolnmsuk)
+* **EolnMsuk** - Current - *Additional Features & Support* - [EolnMsuk](https://github.com/EolnMsuk) / [$eolnmsuk](https://cash.app/$eolnmsuk)
 * **xanzinfl** - 2025 - *Additional Features & Support* - [xanzinfl](https://github.com/xanzinfl)
 * **flouflouit** - 2025 - *Migration to Uhmegle* - [flouflouit](https://github.com/flouflouit)
 * **Isaac Kogan** - 2021 - *Initial Release* - [isaackogan](https://github.com/isaackogan)
