@@ -896,8 +896,9 @@ COLLEGE BUTTON
     display: none;
 }
 
-.videoContainer.remote .wmark { 
-    display: none !important; 
+.videoContainer.remote .wmark,
+.videoContainer.remote .mWmark {
+    display: none !important;
 }
 
 /* Styling for the main Block IP button in the chat */
