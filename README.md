@@ -12,9 +12,9 @@
 - **Hide Watermark - *New***
 - Geolocation
 - IP Blocker
+- IP Based Notes
 - Session Counter
 - Calltime Counter
-- IP Based Notes
 
 ## Untested
 - Voice Commands
