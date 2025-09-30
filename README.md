@@ -41,8 +41,7 @@ Manual installation is fairly easy thanks to Chrome's great developer support:
 6. Use on https://www.uhmegle.com/ freely
 ```
 
-<img width="1050" height="1134" alt="Demo" src="https://github.com/user-attachments/assets/0ed177b8-5c72-43ce-b55a-030e02be9ab0" />
-
+<img width="1046" height="1196" alt="chromegle" src="https://github.com/user-attachments/assets/ab9c7099-eee9-4f4b-b409-76ea064a6c4b" />
 
 ## Authors
 
