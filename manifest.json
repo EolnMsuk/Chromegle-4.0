@@ -3,8 +3,8 @@
   "description": "Elevate your Omegle experience with IP information, custom themes, automation and other general improvements.",
   "author": "github.com/EolnMsuk",
   "homepage_url": "https://discord.gg/omeglestream",
-  "manifest_version": 4,
-  "version": "4.9.8",
+  "manifest_version": 3,
+  "version": "4.9.9",
   "icons": {
     "16": "public/images/IconLogo.png",
     "48": "public/images/IconLogo.png",
