@@ -8,11 +8,12 @@
 
 ## Tested Features
 - **Country Blocker / skip logic - *New***
+- **Report Detection / Notation - *New***
+- **IP Notes (New Fixed UI) - *New***
 - **Face Detection Bypass - *New***
 - **Hide Watermark - *New***
 - Geolocation
 - IP Blocker
-- IP Based Notes
 - Session Counter
 - Calltime Counter
 
@@ -41,7 +42,7 @@ Manual installation is fairly easy thanks to Chrome's great developer support:
 6. Use on https://www.uhmegle.com/ freely
 ```
 
-<img width="1046" height="1196" alt="chromegle" src="https://github.com/user-attachments/assets/ab9c7099-eee9-4f4b-b409-76ea064a6c4b" />
+<img width="797" height="1085" alt="chromegle" src="https://github.com/user-attachments/assets/581a5322-aa20-4ceb-ab9e-b36250d411a7" />
 
 ## Authors
 
