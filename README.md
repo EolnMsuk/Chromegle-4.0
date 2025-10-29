@@ -11,8 +11,8 @@
 - **Report Detection - *New***
 - **Face Bypass - *New***
 - **Hide Watermarks - *New***
-- **IP Blocker (fixed) - *NEW***
-- **IP Note (fixed) - *New***
+- **IP Blocker (FIX) - *NEW***
+- **IP Note (FIX) - *New***
 - Geolocation
 
 - Session Counter
