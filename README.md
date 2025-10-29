@@ -34,8 +34,8 @@
 
 Manual installation is fairly easy thanks to Chrome's great developer support:
 ```
-1. Clone Repository on GitHub to Computer & Unzip
-2. Navigate to chrome://extensions/ web-page
+1. Download latest release github.com/EolnMsuk/Chromegle-4.0/releases
+2. Open browser and navigate to chrome://extensions/ or edge://extensions/
 3. Enable "Developer Tools" on top-right of page
 4. Click "Load Unpacked" on chrome://extensions/
 5. Select repository directory and click OK
