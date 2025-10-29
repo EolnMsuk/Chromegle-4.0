@@ -9,11 +9,12 @@
 ## Tested Features
 - **Country Blocker / skip logic - *New***
 - **Report Detection - *New***
-- **Face Detection Bypass - *New***
-- **IP Notes (New Fixed UI) - *New***
-- **Hide Watermark - *New***
+- **Face Bypass - *New***
+- **Hide Watermarks - *New***
+- **IP Blocker (fixed) - *NEW***
+- **IP Note (fixed) - *New***
 - Geolocation
-- IP Blocker
+
 - Session Counter
 - Calltime Counter
 
