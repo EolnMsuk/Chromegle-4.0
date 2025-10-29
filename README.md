@@ -7,12 +7,13 @@
 - [Project License](#license)
 
 ## Tested Features
-- **Country Blocker / skip logic - *New***
-- **Report Detection - *New***
-- **Face Bypass - *New***
-- **Hide Watermarks - *New***
+- **Country Blocker - *New***
 - **IP Blocker (FIX) - *NEW***
 - **IP Note (FIX) - *New***
+- **Face Bypass - *New***
+- **Report Detection - *New***
+- **Hide Watermark - *New***
+
 - Geolocation
 
 - Session Counter
